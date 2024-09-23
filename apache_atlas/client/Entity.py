@@ -1,8 +1,6 @@
-from apache_atlas.client.ApacheAtlas import ApacheAtlas
-
 class EntityClient:
     
-    def __init__(self, client: ApacheAtlas):
+    def __init__(self, client):
         self.client = client
 
    

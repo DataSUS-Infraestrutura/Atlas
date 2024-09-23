@@ -3,8 +3,11 @@ import requests
 import json 
 from utils.Enums import HTTPMethod, HTTPStatus
 from utils.Exception import AtlasServiceException
+from client.Lineage import LineageClient
 
 class ApacheAtlas:
+
+    
 
     def __init__(self, url: str, username: str, password) -> None:
         self.url = url
@@ -13,6 +16,8 @@ class ApacheAtlas:
 
         self.generate_headers()
         self.generate_base_url()
+
+        self.lineage = LineageClient(self)
 
     def generate_headers(self) -> None:
         encondig_string = base64.b64encode(f"{self.username}:{self.password}")
@@ -23,9 +28,9 @@ class ApacheAtlas:
         }
 
     def generate_base_url(self) -> None:
-        self.BASE_URL = f"{self.url}/api/atlas/v2"
+        self.BASE_URL = f"{self.url}/api/atlas"
 
-    def request(self, url, body, params, method_http: HTTPMethod):
+    def request(self, url, method_http: HTTPMethod, body=None, params=None, ):
         full_url = f"{self.BASE_URL}{url}"
         response = None
 
@@ -41,7 +46,7 @@ class ApacheAtlas:
         if response.status_code == HTTPStatus.OK:
             return response.json()
 
-        raise AtlasServiceException(f"[AtlasServiceError]: {response.status_code} - {response.text}")               
+        raise AtlasServiceException(f"{response.status_code} - {response.text}")               
 
                 
 

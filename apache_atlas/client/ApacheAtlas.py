@@ -4,6 +4,9 @@ import json
 from ..utils.Enums import HTTPMethod, HTTPStatus
 from ..utils.Exception import AtlasServiceException
 from .Lineage import LineageClient
+from .Process import ProcessClient
+from .Entity import EntityClient
+import urllib.parse
 
 class ApacheAtlasClient:
 
@@ -16,6 +19,8 @@ class ApacheAtlasClient:
         self.generate_base_url()
 
         self.lineage = LineageClient(self)
+        self.process = ProcessClient(self)
+        self.entity =  EntityClient(self)
 
     def generate_headers(self) -> None:
         text = f"{self.username}:{self.password}"
@@ -31,22 +36,27 @@ class ApacheAtlasClient:
     def generate_base_url(self) -> None:
         self.BASE_URL = f"{self.url}/api/atlas"
 
-    def request(self, url, method_http: HTTPMethod, body_request=None, params=None):
+    def request(self, url, method_http: HTTPMethod, body=None, params=None):
 
-        if not body_request:
-            body_request = {}
+        if not body:
+            body = {}
 
         full_url = f"{self.BASE_URL}{url}"
+
+        if method_http == HTTPMethod.GET and params:
+            encoded_params = urllib.parse.urlencode(params)  
+            full_url = f"{full_url}?{encoded_params}"
+
         response = None
 
         if method_http == HTTPMethod.GET:
-            response = requests.get(full_url, headers=self.headers, data=json.dumps(body_request)) 
+            response = requests.get(full_url, headers=self.headers, data=json.dumps(body)) 
         elif method_http == HTTPMethod.POST:
-            response = requests.post(full_url, headers=self.headers, data=json.dumps(body_request))
+            response = requests.post(full_url, headers=self.headers, data=json.dumps(body))
         elif method_http == HTTPMethod.DELETE:
-            response = requests.delete(full_url, headers=self.headers, data=json.dumps(body_request))
+            response = requests.delete(full_url, headers=self.headers, data=json.dumps(body))
         else:
-            response = requests.put(full_url, headers=self.headers, data=json.dumps(body_request))
+            response = requests.put(full_url, headers=self.headers, data=json.dumps(body))
 
         if response.status_code == HTTPStatus.OK:
             return response.json()

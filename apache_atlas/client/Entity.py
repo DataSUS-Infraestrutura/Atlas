@@ -1,11 +1,13 @@
-from ..utils.Enums import HTTPMethod
+from ..utils.API import HTTPMethod, API
 
 class EntityClient:
-    ENTITY_POST = "/v2/entity"
-    ENTITY_GET = "/v2/entity/guid"
-       
-    def __init__(self, client):
 
+    ENTITY_API = "/entity/"
+
+    CREATE_ENTITY = API(ENTITY_API, HTTPMethod.POST)
+    GET_ENTITY = API(ENTITY_API + "{guid}", HTTPMethod.GET)
+
+    def __init__(self, client):
         self.client = client
 
     def create_entity(self, entity):
@@ -14,15 +16,13 @@ class EntityClient:
         }
 
         return self.client.request(
-            url=self.ENTITY_POST,
-            body=entity_body,
-            method_http=HTTPMethod.POST
+            api_request=self.CREATE_ENTITY,
+            body=entity_body
         )
         
-    def get_entity(self, guid_entity):
+    def get_entity_by_guid(self, guid_entity):
         return self.client.request(
-            url=f"{self.ENTITY_GET}/{guid_entity}",
-            method_http=HTTPMethod.GET
+             api_request=self.GET_ENTITY.format_path({ 'guid': guid_entity })
         )
     
     

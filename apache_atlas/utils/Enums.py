@@ -1,16 +1,5 @@
 import enum
 
-class HTTPMethod(enum.Enum):
-    GET = "GET"
-    PUT = "PUT"
-    POST = "POST"
-    DELETE = "DELETE"
-    
-class HTTPStatus:
-    OK = 200
-    NO_CONTENT = 204
-    SERVICE_UNAVAILABLE = 503
-
 class AtlasTermAssignmentStatus(enum.Enum):
     DISCOVERED = 0
     PROPOSED = 1

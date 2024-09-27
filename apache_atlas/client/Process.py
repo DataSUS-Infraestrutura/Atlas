@@ -16,7 +16,7 @@ class ProcessClient:
         if not last_entity_guid:
             last_entity_guid = guid_entity
 
-            entity = self.client.entity.get_entity(last_entity_guid)
+            entity = self.client.entity.get_entity_by_guid(last_entity_guid)
             last_entity_typeName = entity['entity']['typeName']
         else:
             last_entity_typeName = lineage_entity['guidEntityMap'][last_entity_guid]['typeName']

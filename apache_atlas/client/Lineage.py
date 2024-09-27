@@ -1,20 +1,24 @@
-from ..utils.Enums import HTTPMethod
+from ..utils.API import HTTPMethod, API
 
 class LineageClient:
-    LINEAGE_BY_GUID = "/v2/lineage"
-    
+
+    LINEAGE_BY_GUID = API(
+        path="/lineage/{guid}",
+        method=HTTPMethod.GET
+    )
+
     def __init__(self, client):
         self.client = client
 
     def get_lineage_by_guid(self, guid_entity):
         return self.client.request(
-            f"{self.LINEAGE_BY_GUID}/{guid_entity}",  HTTPMethod.GET,
-            params={
-                "depth": 999_999,
-            }
+            api_request=self.LINEAGE_BY_GUID
+                .format_path({ "guid": guid_entity })
+                .add_query_params({ "depth": 999_999 })
         )
 
     def get_last_entity_of_lineage(self, data):
+        
         if not data:
             return None
 

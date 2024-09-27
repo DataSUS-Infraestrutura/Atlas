@@ -1,7 +1,7 @@
 import base64
 import requests
 import json 
-from ..utils.Enums import HTTPMethod, HTTPStatus
+from ..utils.API import HTTPMethod, HTTPStatus, API
 from ..utils.Exception import AtlasServiceException
 from .Lineage import LineageClient
 from .Process import ProcessClient
@@ -24,33 +24,30 @@ class ApacheAtlasClient:
 
     def generate_headers(self) -> None:
         text = f"{self.username}:{self.password}"
-        #encondig_string = base64.b64encode(
-        #   text.encode('utf-8')
-        #)
+
+        encode_b64 = base64.b64encode(
+           text.encode('utf-8')
+        )
+
+        decode_string = encode_b64.decode('utf-8')
 
         self.headers = {
             "Content-Type": "application/json",
-            "Authorization": "Basic YWRtaW46YWRtaW4="
+            "Authorization": f"Basic {decode_string}"
         }
 
     def generate_base_url(self) -> None:
-        self.BASE_URL = f"{self.url}/api/atlas"
+        self.BASE_URL = f"{self.url}/api/atlas/v2"
 
-    def request(self, url, method_http: HTTPMethod, body=None, params=None):
+    def request(self, api_instance: API, body_request=None):
+        full_url = f"{self.BASE_URL}{api_instance.format_full_url()}"
+        method_http = api_instance.method
 
-        if not body:
-            body = {}
-
-        full_url = f"{self.BASE_URL}{url}"
-
-        if method_http == HTTPMethod.GET and params:
-            encoded_params = urllib.parse.urlencode(params)  
-            full_url = f"{full_url}?{encoded_params}"
-
+        body = body_request if body_request else {}
         response = None
 
         if method_http == HTTPMethod.GET:
-            response = requests.get(full_url, headers=self.headers, data=json.dumps(body)) 
+            response = requests.get(full_url, headers=self.headers, data=json.dumps(body))
         elif method_http == HTTPMethod.POST:
             response = requests.post(full_url, headers=self.headers, data=json.dumps(body))
         elif method_http == HTTPMethod.DELETE:
@@ -61,7 +58,7 @@ class ApacheAtlasClient:
         if response.status_code == HTTPStatus.OK:
             return response.json()
 
-        raise AtlasServiceException(f"{response.status_code} - {response.text}")               
+        raise Exception(f"{response.status_code} - {response.text}")            
 
                 
 

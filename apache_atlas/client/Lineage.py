@@ -1,4 +1,5 @@
 from ..utils.API import HTTPMethod, API
+from apache_atlas.client.ApacheAtlas import ApacheAtlasClient
 
 class LineageClient:
 
@@ -7,7 +8,7 @@ class LineageClient:
         method=HTTPMethod.GET
     )
 
-    def __init__(self, client):
+    def __init__(self, client: ApacheAtlasClient):
         self.client = client
 
     def get_lineage_by_guid(self, guid_entity):

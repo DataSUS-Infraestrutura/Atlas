@@ -16,10 +16,9 @@ class HTTPStatus:
 
 
 class API:
-    def __init__(self, path: str, method: HTTPMethod, body=None):
+    def __init__(self, path: str, method: HTTPMethod):
         self.path = path
         self.method = method
-        self.body = body if body else {}
 
     def format_path(self, params):
         return API(self.path.format(**params), self.method)
@@ -31,8 +30,6 @@ class API:
             return API(
                f"{self.path}?{query_string}",
                method=self.method,
-               body=self.body,
-               params_url=self.add_query_params
             )
 
         return self

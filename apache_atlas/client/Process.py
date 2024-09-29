@@ -1,11 +1,12 @@
 import json
+from apache_atlas.client.ApacheAtlas import ApacheAtlasClient
 
 class ProcessClient:
     
-    def __init__(self, client):
+    def __init__(self, client: 'ApacheAtlasClient'):
         self.client = client
 
-    def create_process_validation(self, guid_entity, process_entity):
+    def create_process_validation(self, guid_entity: str, process_entity):
         lineage_entity = self.client.lineage.get_lineage_by_guid(guid_entity)        
         last_entity_guid = self.client.lineage.get_last_entity_of_lineage(
             lineage_entity['relations']
@@ -38,6 +39,22 @@ class ProcessClient:
         return self.client.entity.create_entity(
             process_entity
         )
+
+    def create_process_alter_column(self, database_acronymus):
+
+        database_entity = self.client.search.search_by_attribute(
+            attributes={
+                'typeName': '',
+                'attrName': 'acronymus',
+                'attrValuePrefix': database_acronymus,
+                'limit': 1,
+                'offset': 0
+            }
+        )
+
+        print(json.dumps(database_entity, indent=2))
+
+
 
         
 

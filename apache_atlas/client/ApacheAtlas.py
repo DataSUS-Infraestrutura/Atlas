@@ -2,11 +2,6 @@ import base64
 import requests
 import json 
 from ..utils.API import HTTPMethod, HTTPStatus, API
-from ..utils.Exception import AtlasServiceException
-from .Lineage import LineageClient
-from .Process import ProcessClient
-from .Entity import EntityClient
-import urllib.parse
 
 class ApacheAtlasClient:
 
@@ -18,15 +13,21 @@ class ApacheAtlasClient:
         self.generate_headers()
         self.generate_base_url()
 
+        from .Lineage import LineageClient
+        from .Process import ProcessClient
+        from .Entity import EntityClient
+        from .Search import SearchClient
+
         self.lineage = LineageClient(self)
         self.process = ProcessClient(self)
         self.entity =  EntityClient(self)
+        self.search = SearchClient(self)
 
     def generate_headers(self) -> None:
-        text = f"{self.username}:{self.password}"
+        credentials = f"{self.username}:{self.password}"
 
         encode_b64 = base64.b64encode(
-           text.encode('utf-8')
+           credentials.encode('utf-8')
         )
 
         decode_string = encode_b64.decode('utf-8')

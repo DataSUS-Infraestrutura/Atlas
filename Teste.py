@@ -18,10 +18,12 @@ process_entity = {
             "qualifiedName": f"Process.DataSUS@{random_int}",
         }  
 }
-
+ 
+'''
 response = atlas_section.process.create_process_validation(
     guid_entity="7b1d0a05-8242-41c4-a996-73d9ae2e7882",
     process_entity=process_entity
 )
 
 print(json.dumps(response, indent=2))
+'''

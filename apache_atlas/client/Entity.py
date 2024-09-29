@@ -1,4 +1,5 @@
 from ..utils.API import HTTPMethod, API
+from apache_atlas.client.ApacheAtlas import ApacheAtlasClient
 
 class EntityClient:
 
@@ -7,7 +8,7 @@ class EntityClient:
     CREATE_ENTITY = API(ENTITY_API, HTTPMethod.POST)
     GET_ENTITY = API(ENTITY_API + "{guid}", HTTPMethod.GET)
 
-    def __init__(self, client):
+    def __init__(self, client: ApacheAtlasClient):
         self.client = client
 
     def create_entity(self, entity):

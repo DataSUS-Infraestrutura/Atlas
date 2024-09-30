@@ -23,14 +23,13 @@ class API:
     def format_path(self, params):
         return API(self.path.format(**params), self.method)
     
-    def add_query_params(self):
-        if self.params_url:
-            query_string = urlencode(self.params_url)
+    def add_query_params(self, params_url):
+        if params_url:
+            query_string = urlencode(params_url)
 
             return API(
-               f"{self.path}?{query_string}",
+               path=f"{self.path}?{query_string}",
                method=self.method,
             )
 
         return self
-    

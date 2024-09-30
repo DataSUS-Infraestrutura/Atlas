@@ -41,8 +41,10 @@ class ApacheAtlasClient:
         self.BASE_URL = f"{self.url}/api/atlas/v2"
 
     def request(self, api_instance: API, body_request=None):
-        full_url = f"{self.BASE_URL}{api_instance.format_full_url()}"
+        full_url = f"{self.BASE_URL}{api_instance.path}"
         method_http = api_instance.method
+
+        print(full_url)
 
         body = body_request if body_request else {}
         response = None

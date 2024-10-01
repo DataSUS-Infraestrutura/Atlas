@@ -44,17 +44,7 @@ class ProcessClient:
 
     def create_process_alter_column(self, params_search, attribues_to_change, process_change):
 
-        response_search = self.client.search.search_by_attribute(
-            attributes={
-                'typeName': 'dt_table',
-                'attrName': 'acronymus',
-                'attrValuePrefix':  params_search['table_acronymus'],
-                'limit': 1,
-                'offset': 0
-            }
-        )
-
-        partial_entity_table = response_search['entities'][0]
+        partial_entity_table = self.client.search.search_table_by_acronymus(params_search['table_acronymus'])
 
         if not partial_entity_table:
            raise AtlasServiceException("Sigla inválida")
@@ -76,8 +66,10 @@ class ProcessClient:
         if not last_entity_guid:
             last_entity_guid = column_to_change_entity['guid']
 
+        total_process_lineage = math.ceil(len(lineage_column['relations']) / 2)
+
         attribues_to_change['qualifiedName'] = \
-            f"{column_to_change_entity['attributes']['qualifiedName']}.v{math.ceil(len(lineage_column['relations']) / 2)}"
+            f"{column_to_change_entity['attributes']['qualifiedName']}.v{total_process_lineage}"
         
         # Todo mudar esse typeName depois
         new_column_data = {
@@ -89,10 +81,11 @@ class ProcessClient:
         }
     
         new_column_entity = self.client.entity.create_entity(new_column_data)['mutatedEntities']['CREATE'][0]
+        last_entity = self.client.entity.get_entity_by_guid(last_entity_guid) 
 
         process_change['attributes']['inputs'] = [
              {
-                  'typeName': self.client.entity.get_entity_by_guid(last_entity_guid)['entity']['typeName'],
+                  'typeName': last_entity['entity']['typeName'],
                   'guid': last_entity_guid 
              }
         ]
@@ -106,6 +99,8 @@ class ProcessClient:
 
         return self.client.entity.create_entity(process_change)
 
+    def create_process_drop_column(self, params, proces):
+        pass
 
 
         

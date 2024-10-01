@@ -19,8 +19,25 @@ process_entity = {
         }  
 }
 
+# atlas_section.entity.delete_entity_by_guid("cf8234b8-3db0-46db-8dac-f65dfb54f868")
+
+'''
+response_file = atlas_section.entity.create_entity_file_table({
+    "name": "DO-Teste",
+    "description": "Tabela de DO de Test",
+    "extension": ".oarquet",
+    "file_size": "16 MB",
+    "location": "/teste/teste/teste",
+    "state": "SP",
+    "total_lines": 0,
+    "year": 2020,
+}, "SIM", "DO2017")
+
+print(json.dumps(response_file, indent=2))
+'''
 
 
+'''
 a = atlas_section.entity.get_entity_by_guid("0ab0a86b-f777-4a2c-a8ac-5f529fe803ba")
 
 atlas_section.process.create_process_alter_column(
@@ -37,4 +54,5 @@ response = atlas_section.process.create_process_validation(
 )
 
 print(json.dumps(response, indent=2))
+'''
 

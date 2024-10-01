@@ -1,5 +1,6 @@
 from ..utils.API import HTTPMethod, API
 from apache_atlas.client.ApacheAtlas import ApacheAtlasClient
+import json
 
 class SearchClient:
 
@@ -27,7 +28,7 @@ class SearchClient:
             }
         )
 
-        if not response['entities']:
+        if 'entities' not in response:
             return None
 
         return response['entities'][0]
@@ -43,7 +44,7 @@ class SearchClient:
             }
         )
 
-        if not response['entities']:
+        if 'entities' not in response:
             return None
 
         return response['entities'][0]

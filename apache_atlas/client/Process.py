@@ -43,7 +43,7 @@ class ProcessClient:
         )
 
     def create_process_alter_column(self, params_search, attribues_to_change, process_change):
-
+        
         partial_entity_table = self.client.search.search_table_by_acronymus(params_search['table_acronymus'])
 
         if not partial_entity_table:

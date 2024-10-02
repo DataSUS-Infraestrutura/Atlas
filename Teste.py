@@ -15,13 +15,67 @@ process_entity = {
        "attributes": {
             "name": f"Alterar Colunas",
             "description": f"Processo que altera Colunas",
-            "qualifiedName": f"Process.DataSUS@{random_int}",
+            'qualifiedName': "Process.@Teste"
         }  
 }
 
+'''
+type_column = {
+      "name": "dt_table_column_process",
+      "description": "Representa uma coluna após uma transformação",
+      "superTypes": ["DataSet"],
+      "attributeDefs": [
+        {
+          "name": "primary_key",
+          "typeName": "boolean",
+          "isOptional": True,
+          "isUnique": False,
+          "isIndexable": False
+        },
+        {
+          "name": "domain",
+          "typeName": "string",
+          "isOptional": True,
+          "isUnique": False,
+          "isIndexable": False
+        },
+        {
+          "name": "type",
+          "typeName": "string",
+          "isOptional": True,
+          "isUnique": False,
+          "isIndexable": False
+        },
+        {
+          "name": "observation",
+          "typeName": "string",
+          "isOptional": True,
+          "isUnique": False,
+          "isIndexable": False
+        },
+        {
+          "name": "characteristics",
+          "typeName": "string",
+          "isOptional": True,
+          "isUnique": False,
+          "isIndexable": False
+        }
+      ]
+}
+
+response = atlas_section.type.create_type([type_column])
+atlas_section.process.create_process_alter_column(
+    params_search= { 'table_acronymus': 'AB', 'column_name': 'AB_NUMAIH' },
+    process_change=process_entity,
+    attribues_to_change={
+        "type": "CHAR(5)"
+    }
+)
+
+print(json.dumps(response, indent=2))
+
 # atlas_section.entity.delete_entity_by_guid("cf8234b8-3db0-46db-8dac-f65dfb54f868")
 
-'''
 response_file = atlas_section.entity.create_entity_file_table({
     "name": "DO-Teste",
     "description": "Tabela de DO de Test",

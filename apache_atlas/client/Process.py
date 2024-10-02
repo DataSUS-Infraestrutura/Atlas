@@ -2,6 +2,7 @@ import json
 from apache_atlas.client.ApacheAtlas import ApacheAtlasClient
 from ..utils.Exception import AtlasServiceException
 import math
+import re 
 
 class ProcessClient:
     
@@ -43,7 +44,6 @@ class ProcessClient:
         )
 
     def create_process_alter_column(self, params_search, attribues_to_change, process_change):
-        
         partial_entity_table = self.client.search.search_table_by_acronymus(params_search['table_acronymus'])
 
         if not partial_entity_table:
@@ -62,43 +62,52 @@ class ProcessClient:
 
         lineage_column = self.client.lineage.get_lineage_by_guid(column_to_change_entity['guid'])
         last_entity_guid = self.client.lineage.get_last_guid_entity_of_lineage(lineage_column['relations'])
-        
-        if not last_entity_guid:
-            last_entity_guid = column_to_change_entity['guid']
 
-        total_process_lineage = math.ceil(len(lineage_column['relations']) / 2)
+        last_entity = None
 
-        attribues_to_change['qualifiedName'] = \
-            f"{column_to_change_entity['attributes']['qualifiedName']}.v{total_process_lineage}"
+        if last_entity_guid:
+            last_entity = self.client.entity.get_entity_by_guid(last_entity_guid)['entity']
+        else:
+            last_entity = column_to_change_entity
+
+        total_process_lineage = (len(lineage_column['relations']) // 2) + 1
+        last_entity_qualifiedName = last_entity['attributes']['qualifiedName']
+
+        old_version = re.search(r"\.v\d+", last_entity_qualifiedName)
+        not_first_entity = bool(old_version) 
+
+        version = f".v{total_process_lineage}" if not_first_entity else ""
+        last_entity_qualifiedName = last_entity_qualifiedName[:-len(old_version.group())] + version if not_first_entity else last_entity_qualifiedName
+
+        attribues_to_change['qualifiedName'] = last_entity_qualifiedName
         
-        # Todo mudar esse typeName depois
         new_column_data = {
-             "typeName": "table_column_15",
+             "typeName": "dt_table_column_process",
              "attributes": { 
-                 **column_to_change_entity['attributes'],
+                 **last_entity['attributes'],
                  **attribues_to_change, 
               }
         }
-    
-        new_column_entity = self.client.entity.create_entity(new_column_data)['mutatedEntities']['CREATE'][0]
-        last_entity = self.client.entity.get_entity_by_guid(last_entity_guid) 
 
+        new_column_entity = self.client.entity.create_entity(new_column_data)
+
+        process_change['attributes']['qualifiedName'] = f"Process.AlterTable_DataSUS@{json.dumps(attribues_to_change)}" + version
         process_change['attributes']['inputs'] = [
              {
-                  'typeName': last_entity['entity']['typeName'],
-                  'guid': last_entity_guid 
+                  'typeName': last_entity['typeName'],
+                  'guid': last_entity['guid'] 
              }
         ]
 
         process_change['attributes']['outputs'] = [
             {   
-                'typeName': new_column_data['typeName'],
+                'typeName': new_column_entity['typeName'],
                 'guid': new_column_entity['guid']
             }
         ]
 
         return self.client.entity.create_entity(process_change)
-
+        
     def create_process_drop_column(self, params, proces):
         pass
 

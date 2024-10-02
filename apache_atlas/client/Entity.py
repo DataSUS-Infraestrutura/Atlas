@@ -25,10 +25,18 @@ class EntityClient:
             "entity": entity
         }
 
-        return self.client.request(
+        response = self.client.request(
             self.CREATE_ENTITY,
             entity_body
         )
+
+        if 'mutatedEntities' not in response:
+            return response
+
+        if 'CREATE' in response['mutatedEntities']:
+            return response['mutatedEntities']['CREATE'][0]
+
+        return response
     
     def create_entity_file_table(self, data: FileDO, table_acronymus: str, table_column: str):
         file_exists = self.client.search.search_by_attribute(   

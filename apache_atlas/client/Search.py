@@ -12,13 +12,41 @@ class SearchClient:
     def __init__(self, client):
         self.client = client
 
+    def search_unique_entity(self, attributes):
+        response = self.search_by_attribute({
+             'typeName': attributes['typeName'],
+             'attrName': attributes['attrName'],
+             'attrValuePrefix': attributes['attrValue'],
+             'limit': 1,
+             'offset': 0
+        })
+
+        if 'entities' not in response:
+             return None
+
+        return response['entities'][0]
+
     def search_by_attribute(self, attributes):
         return self.client.request(
             api_instance=self.SEARCH_BY_ATTRIBUTE.add_query_params(attributes)
         )
 
+    def search_data_repository(self, data_repository_name):
+        response = self.search_by_attribute({
+             'typeName': 'dt_data_repository',
+             'attrName': 'name',
+             'attrValuePrefix': data_repository_name,
+             'limit': 1,
+             'offset': 0
+        })
+
+        if 'entities' not in response:
+             return None
+
+        return response['entities'][0]
+
     def search_annual_table(self, name):
-        response = self.client.search.search_by_attribute(
+        response = self.search_by_attribute(
             attributes={
                 'typeName': 'dt_anual_table',
                 'attrName': 'name',
@@ -34,7 +62,7 @@ class SearchClient:
         return response['entities'][0]
 
     def search_table_by_acronymus(self, acronymus):
-        response = self.client.search.search_by_attribute(
+        response = self.search_by_attribute(
             attributes={
                 'typeName': 'dt_table',
                 'attrName': 'acronymus',

@@ -69,10 +69,6 @@ class ProcessClient:
         lineage_column = self.client.lineage.get_lineage_by_guid(column_to_change_entity['guid'])
         last_entity_guid = self.client.lineage.get_last_guid_entity_of_lineage(lineage_column['relations'])
 
-        print(json.dumps(last_entity_guid, indent=2))
-
-        return
-
         total_absolute_process_lineage = len(lineage_column['relations'])
 
         last_entity = None

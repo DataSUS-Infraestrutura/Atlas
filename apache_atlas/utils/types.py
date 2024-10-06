@@ -9,3 +9,8 @@ class FileDO(TypedDict):
     state: str
     total_lines: int
     year: int
+
+class AttributesTable(TypedDict):
+    name: str
+    description: str
+    acronymus: str

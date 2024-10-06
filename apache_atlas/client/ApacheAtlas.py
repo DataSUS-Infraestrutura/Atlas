@@ -18,12 +18,14 @@ class ApacheAtlasClient:
         from .Entity import EntityClient
         from .Search import SearchClient
         from .Type import TypeClient
+        from .Utils import UtilsClient
 
         self.lineage = LineageClient(self)
         self.process = ProcessClient(self)
         self.entity =  EntityClient(self)
         self.search = SearchClient(self)
         self.type = TypeClient(self)
+        self.utils = UtilsClient(self)
 
     def generate_headers(self) -> None:
         credentials = f"{self.username}:{self.password}"

@@ -22,7 +22,7 @@ class LineageClient:
         
         if not data:
             return None
-
+        
         from_entity_ids = { item["fromEntityId"] for item in data }
         to_entity_ids = { item["toEntityId"] for item in data }
 

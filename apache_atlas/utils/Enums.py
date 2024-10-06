@@ -17,7 +17,6 @@ class AtlasTermRelationshipStatus(enum.Enum):
     OBSOLETE = 3
     OTHER = 99
 
-
 class TypeCategory(enum.Enum):
     PRIMITIVE = 0
     OBJECT_ID_TYPE = 1

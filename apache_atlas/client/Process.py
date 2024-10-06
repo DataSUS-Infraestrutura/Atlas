@@ -43,7 +43,8 @@ class ProcessClient:
             process_entity
         )
 
-    def create_process_alter_column(self, params_search, attribues_to_change, process_change):
+    def create_process_alter_column(self, params_search, attribues_to_change):
+
         partial_entity_table = self.client.search.search_table_by_acronymus(params_search['table_acronymus'])
 
         if not partial_entity_table:
@@ -58,10 +59,21 @@ class ProcessClient:
                 lambda entity: entity['attributes']['name'] == params_search['column_name'],
                 full_entity['referredEntities'].values()
             ) 
-        )[0]
+        )
+
+        if len(column_to_change_entity) == 0:
+            raise AtlasServiceException("Coluna não existe ou nome inválido")
+        
+        column_to_change_entity = column_to_change_entity[0]
 
         lineage_column = self.client.lineage.get_lineage_by_guid(column_to_change_entity['guid'])
         last_entity_guid = self.client.lineage.get_last_guid_entity_of_lineage(lineage_column['relations'])
+
+        print(json.dumps(last_entity_guid, indent=2))
+
+        return
+
+        total_absolute_process_lineage = len(lineage_column['relations'])
 
         last_entity = None
 
@@ -70,28 +82,31 @@ class ProcessClient:
         else:
             last_entity = column_to_change_entity
 
-        total_process_lineage = (len(lineage_column['relations']) // 2) + 1
         last_entity_qualifiedName = last_entity['attributes']['qualifiedName']
-
-        old_version = re.search(r"\.v\d+", last_entity_qualifiedName)
-        not_first_entity = bool(old_version) 
-
-        version = f".v{total_process_lineage}" if not_first_entity else ""
-        last_entity_qualifiedName = last_entity_qualifiedName[:-len(old_version.group())] + version if not_first_entity else last_entity_qualifiedName
-
-        attribues_to_change['qualifiedName'] = last_entity_qualifiedName
         
         new_column_data = {
-             "typeName": "dt_table_column_process",
+             "typeName": "dt_table_column_process_v1",
              "attributes": { 
                  **last_entity['attributes'],
-                 **attribues_to_change, 
+                 **attribues_to_change,
               }
         }
+        
+        new_column_data['attributes']['qualifiedName'] = self.client.utils.format_qualifiedName_updated_column(last_entity_qualifiedName)
 
         new_column_entity = self.client.entity.create_entity(new_column_data)
 
-        process_change['attributes']['qualifiedName'] = f"Process.AlterTable_DataSUS@{json.dumps(attribues_to_change)}" + version
+        process_change = {
+            "typeName": "Process",
+            "attributes": {
+                "name": f"Alteracão de Colunas",
+                "description": f"Alterações nos atributos: " + self.client.utils.format_change_atributes_to_description(attribues_to_change),
+            }  
+        }
+
+        process_change['attributes']['qualifiedName'] = \
+            f"Process.AlterTable_DataSUS@{'|'.join(attribues_to_change.keys())}.v{self.client.utils.get_version_lineage(total_absolute_process_lineage)}"
+        
         process_change['attributes']['inputs'] = [
              {
                   'typeName': last_entity['typeName'],

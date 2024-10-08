@@ -1,6 +1,7 @@
 import json
 from apache_atlas.client.ApacheAtlas import ApacheAtlasClient
 from ..utils.Exception import AtlasServiceException
+from ..utils.Constants import TypeNames
 import math
 import re 
 
@@ -44,7 +45,6 @@ class ProcessClient:
         )
 
     def create_process_alter_column(self, params_search, attribues_to_change):
-
         partial_entity_table = self.client.search.search_table_by_acronymus(params_search['table_acronymus'])
 
         if not partial_entity_table:
@@ -79,21 +79,34 @@ class ProcessClient:
             last_entity = column_to_change_entity
 
         last_entity_qualifiedName = last_entity['attributes']['qualifiedName']
+
+
+        table_group_columns_changed = self.client.search.search_table_by_acronymus("DTC_2")
+
+        if not table_group_columns_changed:
+            raise AtlasServiceException("Tabela para agrupar colunas modificas não criada")
         
+        # Adaptar Depois isso daq, para criar um table só com as colunas alteradas
         new_column_data = {
-             "typeName": "dt_table_column_process_v1",
+             "typeName": f"{TypeNames.TABLE_COLUMN.value}",
              "attributes": { 
                  **last_entity['attributes'],
                  **attribues_to_change,
+                 ** { 
+                    'belongs_to_table': {
+                        'guid': table_group_columns_changed['guid']
+                    }
+                 }
               }
         }
         
         new_column_data['attributes']['qualifiedName'] = self.client.utils.format_qualifiedName_updated_column(last_entity_qualifiedName)
-
+        
         new_column_entity = self.client.entity.create_entity(new_column_data)
+        version_process = self.client.utils.get_version_lineage(total_absolute_process_lineage)
 
         process_change = {
-            "typeName": "Process",
+            "typeName": f"{TypeNames.PROCESS.value}",
             "attributes": {
                 "name": f"Alteracão de Colunas",
                 "description": f"Alterações nos atributos: " + self.client.utils.format_change_atributes_to_description(attribues_to_change),
@@ -101,7 +114,7 @@ class ProcessClient:
         }
 
         process_change['attributes']['qualifiedName'] = \
-            f"Process.AlterTable_DataSUS@{'|'.join(attribues_to_change.keys())}.v{self.client.utils.get_version_lineage(total_absolute_process_lineage)}"
+            f"Process.AlterTable_DataSUS@{params_search['table_acronymus']}{params_search['column_name']}.v{version_process}"
         
         process_change['attributes']['inputs'] = [
              {

@@ -1,5 +1,6 @@
 from ..utils.API import HTTPMethod, API
 from apache_atlas.client.ApacheAtlas import ApacheAtlasClient
+from ..utils.Constants import TypeNames
 import json
 
 class SearchClient:
@@ -9,7 +10,7 @@ class SearchClient:
         method=HTTPMethod.GET
     )
 
-    def __init__(self, client):
+    def __init__(self, client: ApacheAtlasClient):
         self.client = client
 
     def search_unique_entity(self, attributes):
@@ -33,7 +34,7 @@ class SearchClient:
 
     def search_data_repository(self, data_repository_name):
         response = self.search_by_attribute({
-             'typeName': 'dt_data_repository',
+             'typeName': f'{TypeNames.DATA_REPOSITORY.value}',
              'attrName': 'name',
              'attrValuePrefix': data_repository_name,
              'limit': 1,
@@ -48,7 +49,7 @@ class SearchClient:
     def search_annual_table(self, name):
         response = self.search_by_attribute(
             attributes={
-                'typeName': 'dt_anual_table',
+                'typeName': f'{TypeNames.ANUAL_TABLE.value}',
                 'attrName': 'name',
                 'attrValuePrefix': name,
                 'limit': 1,
@@ -64,7 +65,7 @@ class SearchClient:
     def search_table_by_acronymus(self, acronymus):
         response = self.search_by_attribute(
             attributes={
-                'typeName': 'dt_table',
+                'typeName': f'{TypeNames.TABLE.value}',
                 'attrName': 'acronymus',
                 'attrValuePrefix': acronymus,
                 'limit': 1,

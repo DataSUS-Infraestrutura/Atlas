@@ -209,10 +209,27 @@ data = {
 
 random_int = random.randint(0, 100_000_000)
 
-atlas_section.entity.create_lineage_table(data, "AQ")
+atlas_section.process.create_process_alter_column(
+    params_search= { 'table_acronymus': 'AB', 'column_name': 'AP_TPUPS' },
+    attribues_to_change={
+        "domain": "[1,2,3]"
+    }
+)
 
 '''
-# mudar o type depos
+atlas_section.entity.create_entity_dt_table({
+    "name": "Tabela de Colunas",
+    "description": "Tabela de referência para colunas alteradas",
+    "acronymus": "DTC_2"
+}, "DTC_1")
+
+
+atlas_section.entity.create_database_entity({
+    'name': 'Database de Tabelas',
+    'description': 'Database apenas para agrupar determinadas tabelas (Ignorar)',
+    'acronymus': 'DTC_1'
+}, "DataSUS")
+
 atlas_section.type.create_type([
    {
       "name": "dt_monthly_table",
@@ -229,11 +246,6 @@ atlas_section.type.create_type([
       ]
     },
 ])
-'''
-
-
-
-'''
 
 atlas_section.entity.create_entity_columns(
     "columns-AQ.csv",
@@ -245,9 +257,6 @@ atlas_section.entity.create_entity_dt_table({
     "description": "Tabela de APAC de Quimioterapia",
     "acronymus": "AQ"
 }, "SIA")
-
-
-
 
 
 atlas_section.process.create_process_alter_column(
@@ -269,18 +278,14 @@ atlas_section.process.create_process_validation(
          }
      }
 )
-'''
 
-'''
 atlas_section.process.create_process_alter_column(
     params_search= { 'table_acronymus': 'AB', 'column_name': 'AP_CIDCAS' },
     attribues_to_change={
         "name": "OMG"
     }
 )
-'''
 
-'''
 type_column = {
       "name": "dt_table_column_process",
       "description": "Representa uma coluna após uma transformação",
@@ -327,11 +332,9 @@ type_column = {
 response = atlas_section.type.create_type([type_column])
 
 print(json.dumps(response, indent=2))
-'''
 
 # atlas_section.entity.delete_entity_by_guid("cf8234b8-3db0-46db-8dac-f65dfb54f868")
 
-'''
 response_file = atlas_section.entity.create_entity_file_table({
     "name": "DO-Teste",
     "description": "Tabela de DO de Test",
@@ -346,8 +349,6 @@ response_file = atlas_section.entity.create_entity_file_table({
 print(json.dumps(response_file, indent=2))
 
 
-
-
 a = atlas_section.entity.get_entity_by_guid("0ab0a86b-f777-4a2c-a8ac-5f529fe803ba")
 
 atlas_section.process.create_process_alter_column(
@@ -357,9 +358,7 @@ atlas_section.process.create_process_alter_column(
         'type': 'NUMERIC(1)'
     }
 )
-'''
 
-'''
 response = atlas_section.process.create_process_validation(
     guid_entity="7b1d0a05-8242-41c4-a996-73d9ae2e7882",
     process_entity=process_entity

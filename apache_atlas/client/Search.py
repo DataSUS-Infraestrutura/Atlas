@@ -34,7 +34,7 @@ class SearchClient:
 
     def search_data_repository(self, data_repository_name):
         response = self.search_by_attribute({
-             'typeName': f'{TypeNames.DATA_REPOSITORY.value}',
+             'typeName': f'{TypeNames.DATA_REPOSITORY}',
              'attrName': 'name',
              'attrValuePrefix': data_repository_name,
              'limit': 1,
@@ -49,7 +49,7 @@ class SearchClient:
     def search_annual_table(self, name):
         response = self.search_by_attribute(
             attributes={
-                'typeName': f'{TypeNames.ANUAL_TABLE.value}',
+                'typeName': f'{TypeNames.ANUAL_TABLE}',
                 'attrName': 'name',
                 'attrValuePrefix': name,
                 'limit': 1,
@@ -65,7 +65,7 @@ class SearchClient:
     def search_table_by_acronymus(self, acronymus):
         response = self.search_by_attribute(
             attributes={
-                'typeName': f'{TypeNames.TABLE.value}',
+                'typeName': f'{TypeNames.TABLE}',
                 'attrName': 'acronymus',
                 'attrValuePrefix': acronymus,
                 'limit': 1,

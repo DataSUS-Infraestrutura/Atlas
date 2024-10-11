@@ -12,7 +12,15 @@ class UtilsClient:
 
     def get_version_lineage(self, total_absolute_process_lineage):
         return (total_absolute_process_lineage // 2) + 1
-   
+    
+    def find(self, callback, list):
+        
+        for element in list:
+            if callback(element):
+                return element
+            
+        return None
+    
     def format_qualifiedName_updated_column(self, qualifiedName):
         version_pattern = r"\.v(\d+)"
         match = re.search(version_pattern, qualifiedName)
@@ -33,3 +41,46 @@ class UtilsClient:
             description += f"Atributo {key} -> {value}, "
 
         return description[:-2] + "."
+    
+    # todo ve ser essa ordenação ta certa
+    def detect_column_changes(self, files):
+        
+        def chave_ordenacao(chave):
+            ano = int(chave[2:4])
+            mes = int(chave[4:])
+            return ano, mes
+
+        items = files.items()
+        items_ordenados = sorted(items, key=chave_ordenacao)
+
+        files = dict(items_ordenados)
+
+        sorted_files = files.keys()
+        
+        change_intervals = []
+        last_columns = None
+        first_file = sorted_files[0]
+        
+        for i, file in enumerate(sorted_files):
+            current_columns = set(files[file])
+            
+            if last_columns is None:
+                last_columns = current_columns
+                continue
+            
+            added_columns = current_columns - last_columns
+            removed_columns = last_columns - current_columns
+            
+            if added_columns or removed_columns:
+                interval = {
+                    'interval': f"{first_file}-{file}".replace("AC", ""),
+                    'added': list(added_columns),
+                    'removed': list(removed_columns)
+                }
+            
+                change_intervals.append(interval)
+                first_file = file
+            
+            last_columns = current_columns
+        
+        return change_intervals

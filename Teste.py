@@ -1,6 +1,7 @@
 from apache_atlas.client.ApacheAtlas import ApacheAtlasClient
 import random
 import json
+from apache_atlas.utils.Constants import EndRelations, TypeNames
 
 atlas_section = ApacheAtlasClient(
     "http://localhost:21000",
@@ -209,14 +210,40 @@ data = {
 
 random_int = random.randint(0, 100_000_000)
 
-atlas_section.process.create_process_alter_column(
-    params_search= { 'table_acronymus': 'AB', 'column_name': 'AP_TPUPS' },
-    attribues_to_change={
-        "domain": "[1,2,3]"
-    }
+'''
+
+# Só aceitar no formato TTYYMM onde TT é a sigla da tabela, YY o ano e MM o mes
+atlas_section.lineage.create_lineage_table(
+    data,
+    "AQ"
 )
 
 '''
+
+'''
+atlas_section.process.create_process_alter_column(
+    params_search= { 'table_acronymus': 'SIM', 'column_name': 'RACACOR' },
+    attribues_to_change={
+        "domain": "Branca, Preta, Amarela, Parda, Indígena",
+        'type': 'Char (10)',
+    }
+)
+
+response_file = atlas_section.entity.create_entity_file_table({
+    "name": "DO-Teste_2",
+    "description": "Tabela de DO de Test",
+    "extension": ".oarquet",
+    "file_size": "16 MB",
+    "location": "/teste/teste/teste_2",
+    "state": "SP",
+    "total_lines": 100_000,
+    "year": 2020,
+}, "SIM", "DO2017")
+'''
+'''
+
+
+
 atlas_section.entity.create_entity_dt_table({
     "name": "Tabela de Colunas",
     "description": "Tabela de referência para colunas alteradas",
@@ -334,17 +361,6 @@ response = atlas_section.type.create_type([type_column])
 print(json.dumps(response, indent=2))
 
 # atlas_section.entity.delete_entity_by_guid("cf8234b8-3db0-46db-8dac-f65dfb54f868")
-
-response_file = atlas_section.entity.create_entity_file_table({
-    "name": "DO-Teste",
-    "description": "Tabela de DO de Test",
-    "extension": ".oarquet",
-    "file_size": "16 MB",
-    "location": "/teste/teste/teste",
-    "state": "SP",
-    "total_lines": 0,
-    "year": 2020,
-}, "SIM", "DO2017")
 
 print(json.dumps(response_file, indent=2))
 

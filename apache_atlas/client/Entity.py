@@ -18,6 +18,17 @@ class EntityClient:
     def __init__(self, client: ApacheAtlasClient):
         self.client = client
 
+    def update_entity_attributes_by_guid(self, guid, attributes):
+        entity_full = self.get_entity_by_guid(guid)
+        entity_reduced = entity_full['entity']
+
+        entity_reduced['attributes'] = {
+           **entity_reduced['attributes'],
+           **attributes 
+        }
+
+        return self.create_entity(entity_reduced)
+
     def delete_entity_by_guid(self, guid_entity):
         return self.client.request(
              api_instance=self.DELETE_ENTITY.format_path({ 'guid': guid_entity })
@@ -146,8 +157,8 @@ class EntityClient:
                 "attributes": {
                     "name": row['name'],
                     "qualifiedName": f"{TypeNames.TABLE_COLUMN}.DataSUS.{table_acronymus}@{row['name']}",
-                    "description": row['description'] if 'description' in row else "Não documentado...",
-                    'primary_key': row['primary_key'] if 'primary_key' in row else False,
+                    "description": row['description'] if 'description' in row else "Não documentado pelo DataSUS...",
+                    'primary_key': True if 'primary_key' in row and row['primary_key'] == "SIM" else False,
                     "domain": row['domain'] if 'domain' in row else "",
                     "type": row['type'] if 'type' in row else "",
                     'observation': row['observation'] if 'observation' in row else "",

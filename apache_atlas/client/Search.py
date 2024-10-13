@@ -10,6 +10,11 @@ class SearchClient:
         method=HTTPMethod.GET
     )
 
+    SEARCH_BY_TYPENAME = API(
+        path="/search/basic?typeName={typeName}",
+        method=HTTPMethod.GET
+    )
+
     def __init__(self, client: ApacheAtlasClient):
         self.client = client
 

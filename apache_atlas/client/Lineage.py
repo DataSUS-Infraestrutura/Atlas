@@ -130,7 +130,7 @@ class LineageClient:
                     ],
                     "processType": "ETL",
                     EndRelations.END_TIMELINE_TO_TABLE[1] : {
-                        'guid': "00dea5b0-062a-4714-9f7b-c1b295c98bdf"
+                        'guid': entity_timeline['guid']
                     }
                 }
             })

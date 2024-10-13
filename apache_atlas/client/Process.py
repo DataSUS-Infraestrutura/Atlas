@@ -123,6 +123,8 @@ class ProcessClient:
                 'guid': new_column_entity['guid']
             }
         ]
+
+        return self.client.entity.create_entity(process_change)
         
     def create_process_drop_column(self, params, proces):
         pass

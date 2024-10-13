@@ -12,7 +12,7 @@ class TypeClient:
     def __init__(self, client: ApacheAtlasClient):
         self.client = client
     
-    def create_type(self, types, enumsDefs = [], structDefs=[], classificationDefs=[], relationshipDefs=[]):
+    def create_type(self, types=[], enumsDefs = [], structDefs=[], classificationDefs=[], relationshipDefs=[]):
         payload = {
             "enumDefs": enumsDefs,
             "structDefs": structDefs,

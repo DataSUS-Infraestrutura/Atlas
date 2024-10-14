@@ -197,10 +197,14 @@ class LineageClient:
             for column in columns_entity:
                 columns.add(column['guid'])
 
+
+        start_month_string = "{:02}".format(int(start_month))
+        end_month_string = "{:02}".format(int(end_month))
+
         entity_body = {
             'typeName': TypeNames.DATASET_PROCESSING_LINEAGE,
             'attributes': {
-                'name': f'Arquivos de {table_acronymus} - {start_month}{start_year}-{end_month}{end_month}',
+                'name': f'Arquivos de {table_acronymus} - {start_month_string}{start_year}-{end_month_string}{end_year}',
                 'qualifiedName': f'{TypeNames.DATASET_PROCESSING_LINEAGE}.{table_acronymus}@{id_process}',
                 'description': f"Arquivos de {table_acronymus} que passaram por um processo",
                 'files_interval': [ { 'guid': guid_interval } for guid_interval in guids_entities_month],
@@ -210,7 +214,6 @@ class LineageClient:
         }
 
         return self.client.entity.create_entity(entity_body)
-
 
 
 

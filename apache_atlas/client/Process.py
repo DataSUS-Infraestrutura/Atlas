@@ -44,7 +44,7 @@ class ProcessClient:
             process_entity
         )
     
-    def create_process_alter_column(self, params_search, attribues_to_change):
+    def __create_process_alter_column(self, params_search, attributes_to_change):
         partial_entity_table = self.client.search.search_table_by_acronymus(params_search['table_acronymus'])
 
         if not partial_entity_table:
@@ -75,6 +75,8 @@ class ProcessClient:
             last_entity = column_to_change_entity
 
         last_entity_qualifiedName = last_entity['attributes']['qualifiedName']
+
+        # Criar essa entidade nA VM
         table_group_columns_changed = self.client.search.search_table_by_acronymus("DTC_2")
 
         if not table_group_columns_changed:
@@ -85,7 +87,7 @@ class ProcessClient:
              "typeName": f"{TypeNames.TABLE_COLUMN}",
              "attributes": { 
                  **last_entity['attributes'],
-                 **attribues_to_change,
+                 **attributes_to_change,
                  ** { 
                     EndRelations.END_TABLE_TO_COLUMN[1]: {
                         'guid': table_group_columns_changed['guid']
@@ -103,7 +105,7 @@ class ProcessClient:
             "typeName": f"{TypeNames.PROCESS}",
             "attributes": {
                 "name": f"Alteracão de Colunas - {last_entity['attributes']['name']}",
-                "description": f"Alterações nos atributos: " + self.client.utils.format_change_atributes_to_description(attribues_to_change),
+                "description": f"Alterações nos atributos: " + self.client.utils.format_change_atributes_to_description(attributes_to_change),
             }  
         }
 
@@ -124,9 +126,14 @@ class ProcessClient:
             }
         ]
 
-        return self.client.entity.create_entity(process_change)
+        process_entity = self.client.entity.create_entity(process_change)
+
+        return {
+            'process_entity': process_entity,
+            'entity_column': new_column_entity
+        }
         
-    def create_process_drop_column(self, id_process, columns):
+    def create_process_drop_column_dataset(self, id_process, columns):
         dataset_processing_entity = self.client.search.search_unique_entity({
            'typeName': f'{TypeNames.DATASET_PROCESSING_LINEAGE}',
            'attrName': 'id',
@@ -153,11 +160,11 @@ class ProcessClient:
             )
 
             if not find_column:
-                raise AtlasServiceException("Coluna com o nome errado.")
+                raise AtlasServiceException("Coluna não existe nessa entidade")
             else:
                 columns_to_dropped.append(find_column['guid'])
 
-        
+        # Tem que fazer essa diferença pelo Name e não pelo GUID
         final_columns = set(columns_guid) - set(columns_to_dropped)
 
         qualifiedName_entity = self.client.utils.format_qualifiedName_version(entity['attributes']['qualifiedName'])
@@ -200,6 +207,96 @@ class ProcessClient:
             }
 
         return self.client.entity.create_entity(process_body)
+
+    def create_process_alter_column_dataset(self, columns, id_process, table_acronymus):
+        dataset_processing_entity = self.client.search.search_unique_entity({
+           'typeName': f'{TypeNames.DATASET_PROCESSING_LINEAGE}',
+           'attrName': 'id',
+           'attrValue': id_process
+        })
+
+        if not dataset_processing_entity:
+            raise AtlasServiceException("Processo com esse ID não existe")
+
+        lineage_data = self.client.lineage.get_data_lineage(dataset_processing_entity['guid'])
+
+        full_entity = lineage_data['last_entity']
+        entity = full_entity['entity']
+
+        columns_guid = [column['guid'] for column in entity['attributes']['columns']]
+        columns_entities = self.client.entity.get_entities_by_guid(columns_guid)
+
+        columns_to_updated_guid = []
+
+        for column in columns:
+            find_column = self.client.utils.find(
+                lambda entity: entity['attributes']['name'] == column['name'],
+                columns_entities['entities']
+            )
+
+            if not find_column:
+                raise AtlasServiceException("Coluna não existe nessa entidade")
+            else:
+                columns_to_updated_guid.append(find_column['guid'])
+
+        # Tem que fazer essa diferença pelo Name e não pelo GUID
+        diff_columns = set(columns_guid) - set(columns_to_updated_guid)
+
+        columns_updated = []
+    
+        for column in columns:
+            process_response = self.__create_process_alter_column(
+              params_search= { 'table_acronymus': table_acronymus, 'column_name': column['name'] },
+              attributes_to_change=column['attributes_to_change']
+            )
+
+            columns_updated.append(process_response['entity_column']['guid'])
+
+        final_columns = list(diff_columns)
+        final_columns.extend(columns_updated)
+
+        qualifiedName_entity = self.client.utils.format_qualifiedName_version(entity['attributes']['qualifiedName'])
+
+        entity_body = {
+            'typeName': TypeNames.DATASET_PROCESSING_LINEAGE_RESULT,
+            'attributes': {
+                ** entity['attributes'],
+                ** {
+                    'qualifiedName': qualifiedName_entity,
+                    'columns': [ { 'guid': guid }  for guid in list(final_columns)] 
+                }
+            }
+        }
+
+        final_entity = self.client.entity.create_entity(entity_body)
+
+        qualifiedName_process =f"process.{TypeNames.PROCESS_CHANGE_COLUMN}.ALTER_COLUMN@{id_process}.v{lineage_data['total_process']}"
+        
+        process_body = {
+                "typeName": f"{TypeNames.PROCESS_CHANGE_COLUMN}",
+                "attributes": {
+                    "name": f"Alterações de Colunas",
+                    "description": f"Alterações de Colunas",
+                    "qualifiedName": qualifiedName_process,
+                    'updated_columns': [ { 'guid': guid }  for guid in columns_to_updated_guid],
+                    "inputs": [
+                        {
+                            "typeName": entity['typeName'],
+                            "guid": entity['guid']  
+                        },
+                    ],
+                    "outputs": [
+                        {
+                            "typeName": final_entity['typeName'],
+                            "guid": final_entity['guid'],  
+                        },
+                    ]
+                }
+            }
+
+        return self.client.entity.create_entity(process_body)
+
+
 
 
 

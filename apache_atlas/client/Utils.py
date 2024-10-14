@@ -21,7 +21,7 @@ class UtilsClient:
             
         return None
     
-    def format_qualifiedName_updated_column(self, qualifiedName):
+    def format_qualifiedName_version(self, qualifiedName):
         version_pattern = r"\.v(\d+)"
         match = re.search(version_pattern, qualifiedName)
        

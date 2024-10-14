@@ -43,7 +43,7 @@ class ProcessClient:
         return self.client.entity.create_entity(
             process_entity
         )
-
+    
     def create_process_alter_column(self, params_search, attribues_to_change):
         partial_entity_table = self.client.search.search_table_by_acronymus(params_search['table_acronymus'])
 
@@ -94,7 +94,7 @@ class ProcessClient:
               }
         }
         
-        new_column_data['attributes']['qualifiedName'] = self.client.utils.format_qualifiedName_updated_column(last_entity_qualifiedName)
+        new_column_data['attributes']['qualifiedName'] = self.client.utils.format_qualifiedName_version(last_entity_qualifiedName)
         
         new_column_entity = self.client.entity.create_entity(new_column_data)
         version_process = self.client.utils.get_version_lineage(total_absolute_process_lineage)
@@ -126,8 +126,82 @@ class ProcessClient:
 
         return self.client.entity.create_entity(process_change)
         
-    def create_process_drop_column(self, params, proces):
-        pass
+    def create_process_drop_column(self, id_process, columns):
+        dataset_processing_entity = self.client.search.search_unique_entity({
+           'typeName': f'{TypeNames.DATASET_PROCESSING_LINEAGE}',
+           'attrName': 'id',
+           'attrValue': id_process
+        })
+
+        if not dataset_processing_entity:
+            raise AtlasServiceException("Processo com esse ID não existe")
+
+        lineage_data = self.client.lineage.get_data_lineage(dataset_processing_entity['guid'])
+
+        full_entity = lineage_data['last_entity']
+        entity = full_entity['entity']
+
+        columns_guid = [column['guid'] for column in entity['attributes']['columns']]
+        columns_entities = self.client.entity.get_entities_by_guid(columns_guid)
+
+        columns_to_dropped = []
+
+        for column in columns:
+            find_column = self.client.utils.find(
+                lambda entity: entity['attributes']['name'] == column,
+                columns_entities['entities']
+            )
+
+            if not find_column:
+                raise AtlasServiceException("Coluna com o nome errado.")
+            else:
+                columns_to_dropped.append(find_column['guid'])
+
+        
+        final_columns = set(columns_guid) - set(columns_to_dropped)
+
+        qualifiedName_entity = self.client.utils.format_qualifiedName_version(entity['attributes']['qualifiedName'])
+
+        entity_body = {
+            'typeName': TypeNames.DATASET_PROCESSING_LINEAGE_RESULT,
+            'attributes': {
+                ** entity['attributes'],
+                ** {
+                    'qualifiedName': qualifiedName_entity,
+                    'columns': [ { 'guid': guid }  for guid in list(final_columns)] 
+                }
+            }
+        }
+
+        final_entity = self.client.entity.create_entity(entity_body)
+
+        qualifiedName_process =f"process.{TypeNames.PROCESS_CHANGE_COLUMN}.DROP_COLUMN@{id_process}.v{lineage_data['total_process']}"
+        
+        process_body = {
+                "typeName": f"{TypeNames.PROCESS_CHANGE_COLUMN}",
+                "attributes": {
+                    "name": f"Drops de Colunas",
+                    "description": f"Drops de Colunas",
+                    "qualifiedName": qualifiedName_process,
+                    'deleted_columns': [ { 'guid': guid }  for guid in columns_to_dropped],
+                    "inputs": [
+                        {
+                            "typeName": entity['typeName'],
+                            "guid": entity['guid']  
+                        },
+                    ],
+                    "outputs": [
+                        {
+                            "typeName": final_entity['typeName'],
+                            "guid": final_entity['guid'],  
+                        },
+                    ]
+                }
+            }
+
+        return self.client.entity.create_entity(process_body)
+
+
 
 
         

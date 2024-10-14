@@ -33,3 +33,14 @@ class API:
             )
 
         return self
+    
+    def add_multivalued_query_params(self, params_url):
+        if params_url:
+            query_string = urlencode(params_url, doseq=True)
+
+            return API(
+                path=f"{self.path}?{query_string}",
+                method=self.method,
+            )
+
+        return self

@@ -11,6 +11,8 @@ class EntityClient:
     ENTITY_API = "/entity/"
 
     BULK_ENTITY = API(ENTITY_API + "bulk", HTTPMethod.POST)
+    GET_BULK_ENTITY = API(ENTITY_API + "bulk", HTTPMethod.GET)
+
     CREATE_ENTITY = API(ENTITY_API, HTTPMethod.POST)
     GET_ENTITY = API(ENTITY_API + "guid/{guid}", HTTPMethod.GET)
     DELETE_ENTITY = API(ENTITY_API + "guid/{guid}", HTTPMethod.DELETE)
@@ -28,6 +30,12 @@ class EntityClient:
         }
 
         return self.create_entity(entity_reduced)
+
+
+    def get_entities_by_guid(self, guids):
+        return self.client.request(
+            self.GET_BULK_ENTITY.add_multivalued_query_params({ "guid": guids })
+        )
 
     def delete_entity_by_guid(self, guid_entity):
         return self.client.request(
@@ -99,7 +107,7 @@ class EntityClient:
             'attributes': {
                 **data,
                 ** {
-                    'qualifiedName': f'{TypeNames.TABLE_FILE}.DataSUS@{data["name"]}',
+                    'qualifiedName': f'{TypeNames.TABLE_FILE}.{table_acronymus}.DataSUS@{data["name"]}',
                     EndRelations.END_TABLE_FILE_COLUMN[1]: {
                         'guid': entity_table['guid']
                     },

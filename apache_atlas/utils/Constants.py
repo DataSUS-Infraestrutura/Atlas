@@ -6,11 +6,13 @@ class TypeNames:
     TABLE = "dt_table"
     TABLE_FILE = "dt_table_file"
     # Mudar depois
-    ANUAL_TABLE = "dt_anual_table"
+    ANUAL_TABLE = "dt_annual_table"
     MONTLY_TABLE = "dt_monthly_table"
     PROCESS = "Process"
     TIMELINE = "dt_timeline"
     PROCESS_CHANGE_COLUMN = "dt_column_change_process"
+    DATASET_PROCESSING_LINEAGE = "dt_dataset_processing_lineage_20323"
+    DATASET_PROCESSING_LINEAGE_RESULT = "dt_dataset_processing_lineage_result"
 
 class EndRelations:
     END_TABLE_TO_COLUMN = ('columns_table', 'belongs_to_table')

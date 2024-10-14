@@ -16,6 +16,25 @@ class LineageClient:
     def __init__(self, client: ApacheAtlasClient):
         self.client = client
 
+    def get_data_lineage(self, entity_guid):
+        entity = self.client.entity.get_entity_by_guid(entity_guid)
+
+        lineage_column = self.client.lineage.get_lineage_by_guid(entity['entity']['guid'])
+        last_entity_guid = self.client.lineage.get_last_guid_entity_of_lineage(lineage_column['relations'])
+            
+        last_entity = None
+
+        if last_entity_guid:
+            last_entity = self.client.entity.get_entity_by_guid(last_entity_guid)
+        else:
+            last_entity = entity
+
+        return {
+            'lineage': lineage_column,
+            'last_entity': last_entity,
+            'total_process': self.client.utils.get_version_lineage(len(lineage_column['relations']))
+        }
+
     def get_lineage_by_guid(self, guid_entity):
         return self.client.request(
             self.LINEAGE_BY_GUID
@@ -69,9 +88,12 @@ class LineageClient:
                     'name': f"{lineage}",
                     'description': f'Colunas das Tabelas de {table_acronymus} do ano {year} e mês {month}',
                     "qualifiedName": f"{TypeNames.MONTLY_TABLE}@{lineage}",
-                    'year': year,
+                    'year': 2000 + int(year),
                     "month": month,
                     EndRelations.END_LINEAGE_TO_COLUMN[0]: columns_guid,
+                    EndRelations.END_TABLE_TO_COLUMNS_TIME[1]: {
+                        'guid': table['guid']                         
+                    }
                 }
             })
 
@@ -136,3 +158,61 @@ class LineageClient:
             })
         
         return self.client.entity.create_multiple_entities(process_timeline)
+    
+    def create_entity_lineage_by_interval_time_monthly(self, interval, table_acronymus, id_process):
+        table = self.client.search.search_table_by_acronymus(table_acronymus)
+
+        if not table:
+            raise AtlasServiceException("Tabela não existe")
+        
+        querys = [
+            f'/search/dsl?query={TypeNames.MONTLY_TABLE}',
+            'name like "{acronymus}*"',
+            'and ((year > {start_year}) or (year = {start_year} and month >= {start_month}))',
+            'and ((year < {end_year}) or (year = {end_year} and month <= {end_month}))'
+        ]
+
+        start_year, end_year, start_month, end_month = interval['start_year'], interval['end_year'], interval['start_month'], interval['end_month']
+            
+        query = ' '.join(querys).format(**{
+            'acronymus': table_acronymus,
+            'start_year': start_year,
+            'end_year': end_year,
+            'start_month': start_month,
+            'end_month': end_month,
+        })
+        
+        response = self.client.request(API(query, HTTPMethod.GET))
+
+        entities_monthly_tables = response['entities']
+        guids_entities_month = [entitity['guid'] for entitity in entities_monthly_tables]
+
+        full_entities_monthy = self.client.entity.get_entities_by_guid(guids_entities_month)
+
+        columns = set()
+
+        for full_entity_month in full_entities_monthy['entities']:
+            columns_entity = full_entity_month['relationshipAttributes'][EndRelations.END_LINEAGE_TO_COLUMN[0]]
+
+            for column in columns_entity:
+                columns.add(column['guid'])
+
+        entity_body = {
+            'typeName': TypeNames.DATASET_PROCESSING_LINEAGE,
+            'attributes': {
+                'name': f'Arquivos de {table_acronymus} - {start_month}{start_year}-{end_month}{end_month}',
+                'qualifiedName': f'{TypeNames.DATASET_PROCESSING_LINEAGE}.{table_acronymus}@{id_process}',
+                'description': f"Arquivos de {table_acronymus} que passaram por um processo",
+                'files_interval': [ { 'guid': guid_interval } for guid_interval in guids_entities_month],
+                'columns': [{ 'guid': column_guid } for column_guid in columns],
+                'id': id_process
+            }
+        }
+
+        return self.client.entity.create_entity(entity_body)
+
+
+
+
+
+

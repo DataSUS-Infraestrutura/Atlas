@@ -44,6 +44,7 @@ class ProcessClient:
             process_entity
         )
     
+    # Não funciona se alterar o nome da coluna
     def __create_process_alter_column(self, params_search, attributes_to_change):
         partial_entity_table = self.client.search.search_table_by_acronymus(params_search['table_acronymus'])
 
@@ -160,11 +161,10 @@ class ProcessClient:
             )
 
             if not find_column:
-                raise AtlasServiceException("Coluna não existe nessa entidade")
+                raise AtlasServiceException(F"Coluna '{column}' não existe nessa entidade")
             else:
                 columns_to_dropped.append(find_column['guid'])
 
-        # Tem que fazer essa diferença pelo Name e não pelo GUID
         final_columns = set(columns_guid) - set(columns_to_dropped)
 
         qualifiedName_entity = self.client.utils.format_qualifiedName_version(entity['attributes']['qualifiedName'])
@@ -235,13 +235,11 @@ class ProcessClient:
             )
 
             if not find_column:
-                raise AtlasServiceException("Coluna não existe nessa entidade")
+                raise AtlasServiceException(f"Coluna '{column}' não existe nessa entidade")
             else:
                 columns_to_updated_guid.append(find_column['guid'])
 
-        # Tem que fazer essa diferença pelo Name e não pelo GUID
         diff_columns = set(columns_guid) - set(columns_to_updated_guid)
-
         columns_updated = []
     
         for column in columns:

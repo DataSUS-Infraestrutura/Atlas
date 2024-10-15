@@ -190,13 +190,17 @@ class LineageClient:
         full_entities_monthy = self.client.entity.get_entities_by_guid(guids_entities_month)
 
         columns = set()
+        files = set()
 
         for full_entity_month in full_entities_monthy['entities']:
             columns_entity = full_entity_month['relationshipAttributes'][EndRelations.END_LINEAGE_TO_COLUMN[0]]
+            files_entity = full_entity_month['relationshipAttributes'][EndRelations.END_TABLE_FILE_COLUMN[1]]
 
             for column in columns_entity:
                 columns.add(column['guid'])
 
+            for file in files_entity:
+                files.add(file['guid'])
 
         start_month_string = "{:02}".format(int(start_month))
         end_month_string = "{:02}".format(int(end_month))
@@ -207,15 +211,67 @@ class LineageClient:
                 'name': f'Arquivos de {table_acronymus} - {start_month_string}{start_year}-{end_month_string}{end_year}',
                 'qualifiedName': f'{TypeNames.DATASET_PROCESSING_LINEAGE}.{table_acronymus}@{id_process}',
                 'description': f"Arquivos de {table_acronymus} que passaram por um processo",
-                'files_interval': [ { 'guid': guid_interval } for guid_interval in guids_entities_month],
+                'files_interval': [ { 'guid': guid_file } for guid_file in files],
                 'columns': [{ 'guid': column_guid } for column_guid in columns],
                 'id': id_process
             }
         }
 
         return self.client.entity.create_entity(entity_body)
+    
+    def create_entity_lineage_by_interval_time_anual(self, interval, table_acronymus, id_process):
+        table = self.client.search.search_table_by_acronymus(table_acronymus)
 
+        if not table:
+            raise AtlasServiceException("Tabela não existe")
+        
+        querys = [
+            f'/search/dsl?query={TypeNames.ANUAL_TABLE}',
+            'name like "{acronymus}*"',
+            'and (year >= {start_year} and year <= {end_year})',
+        ]
 
+        start_year, end_year,  = interval['start_year'], interval['end_year']
+            
+        query = ' '.join(querys).format(**{
+            'acronymus': table_acronymus,
+            'start_year': start_year,
+            'end_year': end_year,
+        })
+        
+        response = self.client.request(API(query, HTTPMethod.GET))
+
+        entities_monthly_tables = response['entities']
+        guids_entities_month = [entitity['guid'] for entitity in entities_monthly_tables]
+
+        entities_anual_columns = self.client.entity.get_entities_by_guid(guids_entities_month)
+
+        columns = set()
+        files = set()
+
+        for entity_anual_column in entities_anual_columns['entities']:
+            columns_entity = entity_anual_column['relationshipAttributes'][EndRelations.END_LINEAGE_TO_COLUMN[0]]
+            files_entity = entity_anual_column['relationshipAttributes'][EndRelations.END_TABLE_FILE_COLUMN[1]]
+
+            for column in columns_entity:
+                columns.add(column['guid'])
+
+            for file in files_entity:
+                files.add(file['guid'])
+
+        entity_body = {
+            'typeName': TypeNames.DATASET_PROCESSING_LINEAGE,
+            'attributes': {
+                'name': f'Arquivos de {table_acronymus} - {start_year}-{end_year}',
+                'qualifiedName': f'{TypeNames.DATASET_PROCESSING_LINEAGE}.{table_acronymus}@{id_process}',
+                'description': f"Arquivos de {table_acronymus} que passaram por um processo dos anos de {start_year} até {end_year}",
+                'files_interval': [ { 'guid': guid_file } for guid_file in files],
+                'columns': [{ 'guid': column_guid } for column_guid in columns],
+                'id': id_process
+            }
+        }
+
+        return self.client.entity.create_entity(entity_body)
 
 
 

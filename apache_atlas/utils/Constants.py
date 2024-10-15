@@ -11,7 +11,9 @@ class TypeNames:
     PROCESS = "Process"
     TIMELINE = "dt_timeline"
     PROCESS_CHANGE_COLUMN = "dt_column_change_process"
-    DATASET_PROCESSING_LINEAGE = "dt_dataset_processing_lineage_20323"
+
+
+    DATASET_PROCESSING_LINEAGE = "dt_dataset_processing_lineage_2653"
     DATASET_PROCESSING_LINEAGE_RESULT = "dt_dataset_processing_lineage_result"
 
 class EndRelations:

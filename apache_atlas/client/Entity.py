@@ -31,7 +31,6 @@ class EntityClient:
 
         return self.create_entity(entity_reduced)
 
-
     def get_entities_by_guid(self, guids):
         return self.client.request(
             self.GET_BULK_ENTITY.add_multivalued_query_params({ "guid": guids })

@@ -87,7 +87,7 @@ class LineageClient:
                 "attributes": {
                     'name': f"{lineage}",
                     'description': f'Colunas das Tabelas de {table_acronymus} do ano {year} e mês {month}',
-                    "qualifiedName": f"{TypeNames.MONTLY_TABLE}@{lineage}",
+                    "qualifiedName": f"{TypeNames.MONTLY_TABLE}{table_acronymus}@{lineage}",
                     'year': 2000 + int(year),
                     "month": month,
                     EndRelations.END_LINEAGE_TO_COLUMN[0]: columns_guid,

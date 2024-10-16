@@ -129,7 +129,7 @@ class EntityClient:
        if not database:
            raise AtlasServiceException("Database nào existe")
        
-       attributes['qualifiedName'] = f"{TypeNames.TABLE}.DataSUS@{attributes['acronymus']}"
+       attributes['qualifiedName'] = f"{TypeNames.TABLE}.{database_acronymus}.DataSUS@{attributes['acronymus']}"
        attributes['acronymus'] = attributes['acronymus'].upper()
        attributes[EndRelations.END_DATABASE_TO_TABLE[1]] = {
            "guid": database['guid']

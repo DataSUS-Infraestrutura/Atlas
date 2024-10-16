@@ -5,14 +5,15 @@ class TypeNames:
     TABLE_COLUMN = "dt_table_column"
     TABLE = "dt_table"
     TABLE_FILE = "dt_table_file"
-    # Mudar depois
-    ANUAL_TABLE = "dt_annual_table"
+
+    # Mudar depois p/ dt_anual_table
+    ANUAL_TABLE = "dt_anual_table"
     MONTLY_TABLE = "dt_monthly_table"
     PROCESS = "Process"
     TIMELINE = "dt_timeline"
     PROCESS_CHANGE_COLUMN = "dt_column_change_process"
 
-
+    # mUDAR Depois
     DATASET_PROCESSING_LINEAGE = "dt_dataset_processing_lineage_2653"
     DATASET_PROCESSING_LINEAGE_RESULT = "dt_dataset_processing_lineage_result"
 
@@ -20,6 +21,7 @@ class EndRelations:
     END_TABLE_TO_COLUMN = ('columns_table', 'belongs_to_table')
     END_LINEAGE_TO_COLUMN = ('columns_anual_table', 'belongs_to_table_anual')
     END_TABLE_TO_REFERENCE = ('references', 'is_reference_table')
+
     END_TABLE_TO_FILE = ('files', 'is_file_table')
     END_TABLE_TO_DOCUMENTATION_FILE = ('documentation_files', 'is_files_documentation_tables')
     END_DATABASE_TO_TABLE = ('tables', 'belongs_database')

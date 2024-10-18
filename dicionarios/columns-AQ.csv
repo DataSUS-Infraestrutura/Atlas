@@ -1,7 +1,7 @@
 name,type,description,domain
 AP_MVM,CHAR (6),Data de Processamento / Movimento (AAAAMM),
 AP_CONDIC,CHAR (2),Sigla do Tipo de Gestão no qual o Estado ou Município está habilitado,
-AP_GESTAO,CHAR (6),Código da Unidade de Federação + Código Município de Gestão ou UF0000 se a Unidade está sob GestãoEstadual,
+AP_GESTAO,CHAR (6),Código da Unidade de Federação + Código Município de Gestão ou UF0000 se a Unidade está sob Gestão Estadual,
 AP_CODUNI,CHAR (7),Código do Estabelecimento no CNES (Cadastro Nacional de Estabelecimentos de Saúde),
 AP_AUTORIZ,CHAR (13),Número da APAC,"Lei de formação: UFAATsssssssd, onde UF – Unid. da Federação, AA – ano, T – tipo, sssssss– sequencial, d – dígito"
 AP_CMP,CHAR (6),Data de Atendimento ao paciente / Competência (AAAAMM),

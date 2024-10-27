@@ -46,8 +46,16 @@ class UtilsClient:
     def detect_column_changes(self, files):
         
         def chave_ordenacao(chave):
-            ano = int(chave[2:4])
-            mes = int(chave[4:])
+            ano = int(chave[-4:-2])
+            mes = int(chave[-2:])
+
+            # E tome numeros magicos, são por que o ano só tem 2 ditito e tem uns < 99
+            # que é pra do ano de 1990, então faz essa verificação, tem outra parte do codigo com isso tbm
+            if ano > 80 and ano <= 99:
+               ano = ano + 1900
+            else:
+               ano = ano + 2000 
+
             return ano, mes
 
         items = files.items()
@@ -73,7 +81,7 @@ class UtilsClient:
             
             if added_columns or removed_columns:
                 interval = {
-                    'interval': f"{first_file}-{file}".replace("AC", ""),
+                    'interval': f"{first_file}-{file}",
                     'added': list(added_columns),
                     'removed': list(removed_columns)
                 }

@@ -6,7 +6,7 @@
 "AP_AUTORIZ","CHAR (13)","Número da APAC. Lei de formação: UFAATsssssssd","onde UF – Unid. da Federação, AA – ano, T – tipo, sssssss –sequencial, d – dígito","","",""
 "AP_CMP","CHAR (6)","Data de Atendimento ao paciente / Competência (AAAAMM)","","","",""
 "AP_PRIPAL","CHAR (10)","Procedimento Principal da APAC","","","",""
-"AP_VL_AP NUMERIC","(20.2)","Valor Total da APAC Aprovado","","","",""
+"AP_VL_AP","NUMERIC (20.2)","Valor Total da APAC Aprovado","","","",""
 "AP_UFMUN","CHAR (6)","Código da Unidade da Federação + Município do Estabelecimento","","","",""
 "AP_TPUPS","CHAR (2)","Tipo de Estabelecimento","","","",""
 "AP_TIPPRE","CHAR (2)","Tipo de Prestador","","","",""
@@ -44,3 +44,4 @@
 "AP_CIDPRI","CHAR (4)","CID Principal","","","",""
 "AP_CIDSEC","CHAR (4)","CID Secundário","","","",""
 "AP_ETNIA","CHAR (4)","Etnia do paciente","","","",""
+"AP_NATJUR","","","","","","Não documentada pela documentação SIM, ou coluna antiga renomeada que foi renomeada."

@@ -33,5 +33,5 @@
 "VL_APROV","NUMERIC (20.2)","Valor Aprovado do procedimento","","","",""
 "UFDIF","CHAR (1)","Indica se a UF de residência do paciente é diferente da UF de localização do estabelecimento","0 = mesma UF; 1 = UF diferente","","",""
 "MNDIF","CHAR (1)","Indica se o município de residência do paciente é diferente do município de localização do estabelecimento","0 = mesmo município; 1 = município diferente","","",""
-"ETNIA","CHAR (4)","Conteúdo definido conforme Portaria SAS Nº 508 de 28 de Setembro de 2010.","","","Anexo I. Preencher somente se o campo RACACOR for 05 - Indígena. A partir da competência Out/2010",""
+"ETNIA","CHAR (4)","Conteúdo definido conforme Portaria SAS Nº 508 de 28 de Setembro de 2010.","","","",""
 "NAT_JUR","CHAR (4)","Código da Natureza Jurídica","","","",""

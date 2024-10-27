@@ -57,5 +57,6 @@
 "AN_ALBUMI","CHAR (2)","Albumina em g%","","","",""
 "AN_HCV","CHAR (1)","Indicativo de presença de Anticorpos de HCV","(P = Positivo; N = Negativo)","","",""
 "AN_HBSAG","CHAR (1)","Indicativo de HBsAg","(P = Positivo; N = Negativo)","","",""
-"AN_HIV","CHAR (1)","Indicativo de presença de anticorpos de HIV","(P = Positivo; N = Negativo),
-AN_HB, CHAR (2),HB em g%""","","",""
+"AN_HIV","CHAR (1)","Indicativo de presença de anticorpos de HIV","(P = Positivo; N = Negativo)"
+"AN_HB","CHAR (2)","HB em g%","","","","" 
+"AP_NATJUR","","","","","","Não documentada pela documentação SIM, ou coluna antiga renomeada que foi renomeada."

@@ -78,8 +78,12 @@ class LineageClient:
             year = lineage[2:4]
             month = lineage[4:]
 
+            columns = list(map(lambda x: x.strip(), columns))
             columns.sort()
+            
             columns_guid = [{ "guid": guid_columns[column] } for column in columns]
+
+            int_year = int(year)
 
             entities_lineage.append({
                 "typeName": f"{TypeNames.MONTLY_TABLE}",
@@ -88,7 +92,8 @@ class LineageClient:
                     'name': f"{lineage}",
                     'description': f'Colunas das Tabelas de {table_acronymus} do ano {year} e mês {month}',
                     "qualifiedName": f"{TypeNames.MONTLY_TABLE}{table_acronymus}@{lineage}",
-                    'year': 2000 + int(year),
+                    # Chegar em 2080 esse codigo quebra
+                    'year': 1900 + year if int_year > 80 and int_year <= 99 else 2000 + int_year,
                     "month": month,
                     EndRelations.END_LINEAGE_TO_COLUMN[0]: columns_guid,
                     EndRelations.END_TABLE_TO_COLUMNS_TIME[1]: {

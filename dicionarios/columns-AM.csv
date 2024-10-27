@@ -1,51 +1,51 @@
-name,type,description,domain
-AP_MVM, CHAR (6), Data de Processamento / Movimento (AAAAMM),
-AP_CONDIC, CHAR (2), Sigla do Tipo de Gestão na qual Estado ou Município está habilitado,
-AP_GESTAO, CHAR (6), "Código da Unidade de Federação + Código do Município de Gestão, ou UF", 0000 se o estabelecimento está sob Gestão Estadual
-AP_CODUNI, CHAR (7), Código do Estabelecimento no CNES (Cadastro Nacional de Estabelecimentos de Saúde),
-AP_AUTORIZ, CHAR (13), Número da APAC. Lei de formação: UFAATsssssssd, "UF – Unid. da Federação, AA – ano, T – tipo, sssssss – sequencial, d – dígito"
-AP_CMP, CHAR (6), Data de Atendimento ao paciente / Competência (AAAAMM),
-AP_PRIPAL, CHAR (10), Procedimento Principal da APAC,
-8 AP_VL_AP, NUMERIC (12.2), Valor Total da APAC Aprovado,
-AP_UFMUN, CHAR (6), Código da Unidade da Federação + Código do Município do Estabelecimento,
-AP_TPUPS, CHAR (2), Tipo de Estabelecimento,
-AP_TIPPRE, CHAR (2), Tipo de Prestador,
-AP_MN_IND, CHAR (1), Estabelecimento Mantido / Individual,
-AP_CNPJCPF, CHAR (14), CNPJ do Estabelecimento executante,
-AP_CNPJMNT, CHAR (14), CNPJ Mantenedora,
-AP_CNSPCN, CHAR (15), Número do CNS (Cartão Nacional de Saúde) do paciente,
-AP_COIDADE, CHAR (1), Código da Idade do paciente,
-AP_NUIDADE, CHAR (2), Número da Idade,
-AP_SEXO, CHAR (1), Sexo do paciente,
-AP_RACACOR, CHAR (2), Raça/Cor do paciente, "01 - Branca, 02 - Preta, 03 - Parda, 04 - Amarela, 05 - Indígena, 99 - Sem informação"
-AP_MUNPCN, CHAR (6), Código Unidade de Federação + Código do Município de Residência do paciente,
-AP_UFNACIO, CHAR (3), Código da Nacionalidade do paciente,
-AP_CEPPCN, CHAR (8), CEP do paciente,
-AP_UFDIF, CHAR (2), Indica se a UF de residência do paciente é diferente da UF de localização do estabelecimento,
-AP_MNDIF, CHAR (2), Indica se o município de residência do paciente é diferente do município de localização do estabelecimento,
-AP_DTINIC, CHAR (8), Data de INÍCIO validade,
-AP_DTFIM, CHAR (8), Data de FIM validade,
-AP_TPATEN, CHAR (2), Tipo de Atendimento de APAC,
-AP_TPAPAC, CHAR (1), Indica se a APAC é,"1 - inicial, 2 - continuidade, 3 – única"
-AP_MOTSAI, CHAR (2), Motivo de Saída e Permanência,
-AP_OBITO, CHAR (1), Indicador de Óbito,
-AP_ENCERR, CHAR (1), Indicador de Encerramento,
-AP_PERMAN, CHAR (1), Indicador de Permanência,
-AP_ALTA, CHAR (1), Indicador de Alta,
-AP_TRANSF, CHAR (1), Indicador de Transferência,
-AP_DTOCOR, CHAR (8), Data de Ocorrência que substitui a data de FIM de validade,
-AP_CODEMI, CHAR (10), Código do Órgão emissor,
-AP_CATEND, CHAR (2), Caráter do Atendimento,
-AP_APACANT, CHAR (13), Número APAC Anterior,
-AP_UNISOL, CHAR (7), Código do Estabelecimento solicitante no CNES (Cadastro Nacional de Estabelecimentos de Saúde),
-AP_DTSOLIC, CHAR(8), Data da Solicitação,
-AP_DTAUT, CHAR(8), Data da Autorização,
-AP_CIDCAS, CHAR (4), CID Causas Associadas,
-AP_CIDPRI, CHAR (4), CID Principal,
-AP_CIDSEC, CHAR (4), CID Secundário,
-AP_ETNIA, CHAR (4), Etnia do paciente,
-AM_PESO, CHAR (3), Peso do paciente em kg,
-AM_ALTURA, CHAR (3), Altura do paciente em cm,
-AM_TRANSPL, CHAR (1), Indicador se o paciente fez transplante,
-AM_QTDTRAN, CHAR (2), Quantidade de Transplantes,
-AM_GESTANT, CHAR (1), Indicador de Gestante, "(S = Sim; N = Não"
+"name","type","description","domain","primary_key","characteristics","observation"
+"AP_MVM","CHAR (6)","Data de Processamento / Movimento (AAAAMM)","","","",""
+"AP_CONDIC","CHAR (2)","Sigla do Tipo de Gestão na qual Estado ou Município está habilitado","","","",""
+"AP_GESTAO","CHAR (6)","Código da Unidade de Federação + Código do Município de Gestão, ou UF, 0000 se o estabelecimento está sob Gestão Estadual","","","",""
+"AP_CODUNI","CHAR (7)","Código do Estabelecimento no CNES (Cadastro Nacional de Estabelecimentos de Saúde)","","","",""
+"AP_AUTORIZ","CHAR (13)","Número da APAC. Lei de formação: UFAATsssssssd","UF – Unid. da Federação, AA – ano, T – tipo, sssssss – sequencial, d – dígito","","",""
+"AP_CMP","CHAR (6)","Data de Atendimento ao paciente / Competência (AAAAMM)","","","",""
+"AP_PRIPAL","CHAR (10)","Procedimento Principal da APAC","","","",""
+"8 AP_VL_AP","NUMERIC (12.2)","Valor Total da APAC Aprovado","","","",""
+"AP_UFMUN","CHAR (6)","Código da Unidade da Federação + Código do Município do Estabelecimento","","","",""
+"AP_TPUPS","CHAR (2)","Tipo de Estabelecimento","","","",""
+"AP_TIPPRE","CHAR (2)","Tipo de Prestador","","","",""
+"AP_MN_IND","CHAR (1)","Estabelecimento Mantido / Individual","","","",""
+"AP_CNPJCPF","CHAR (14)","CNPJ do Estabelecimento executante","","","",""
+"AP_CNPJMNT","CHAR (14)","CNPJ Mantenedora","","","",""
+"AP_CNSPCN","CHAR (15)","Número do CNS (Cartão Nacional de Saúde) do paciente","","","",""
+"AP_COIDADE","CHAR (1)","Código da Idade do paciente","","","",""
+"AP_NUIDADE","CHAR (2)","Número da Idade","","","",""
+"AP_SEXO","CHAR (1)","Sexo do paciente","","","",""
+"AP_RACACOR","CHAR (2)","Raça/Cor do paciente","01 - Branca, 02 - Preta, 03 - Parda, 04 - Amarela, 05 - Indígena, 99 - Sem informação","","",""
+"AP_MUNPCN","CHAR (6)","Código Unidade de Federação + Código do Município de Residência do paciente","","","",""
+"AP_UFNACIO","CHAR (3)","Código da Nacionalidade do paciente","","","",""
+"AP_CEPPCN","CHAR (8)","CEP do paciente","","","",""
+"AP_UFDIF","CHAR (2)","Indica se a UF de residência do paciente é diferente da UF de localização do estabelecimento","","","",""
+"AP_MNDIF","CHAR (2)","Indica se o município de residência do paciente é diferente do município de localização do estabelecimento","","","",""
+"AP_DTINIC","CHAR (8)","Data de INÍCIO validade","","","",""
+"AP_DTFIM","CHAR (8)","Data de FIM validade","","","",""
+"AP_TPATEN","CHAR (2)","Tipo de Atendimento de APAC","","","",""
+"AP_TPAPAC","CHAR (1)","Indica se a APAC é","1 - inicial, 2 - continuidade, 3 – única","","",""
+"AP_MOTSAI","CHAR (2)","Motivo de Saída e Permanência","","","",""
+"AP_OBITO","CHAR (1)","Indicador de Óbito","","","",""
+"AP_ENCERR","CHAR (1)","Indicador de Encerramento","","","",""
+"AP_PERMAN","CHAR (1)","Indicador de Permanência","","","",""
+"AP_ALTA","CHAR (1)","Indicador de Alta","","","",""
+"AP_TRANSF","CHAR (1)","Indicador de Transferência","","","",""
+"AP_DTOCOR","CHAR (8)","Data de Ocorrência que substitui a data de FIM de validade","","","",""
+"AP_CODEMI","CHAR (10)","Código do Órgão emissor","","","",""
+"AP_CATEND","CHAR (2)","Caráter do Atendimento","","","",""
+"AP_APACANT","CHAR (13)","Número APAC Anterior","","","",""
+"AP_UNISOL","CHAR (7)","Código do Estabelecimento solicitante no CNES (Cadastro Nacional de Estabelecimentos de Saúde)","","","",""
+"AP_DTSOLIC","CHAR(8)","Data da Solicitação","","","",""
+"AP_DTAUT","CHAR(8)","Data da Autorização","","","",""
+"AP_CIDCAS","CHAR (4)","CID Causas Associadas","","","",""
+"AP_CIDPRI","CHAR (4)","CID Principal","","","",""
+"AP_CIDSEC","CHAR (4)","CID Secundário","","","",""
+"AP_ETNIA","CHAR (4)","Etnia do paciente","","","",""
+"AM_PESO","CHAR (3)","Peso do paciente em kg","","","",""
+"AM_ALTURA","CHAR (3)","Altura do paciente em cm","","","",""
+"AM_TRANSPL","CHAR (1)","Indicador se o paciente fez transplante","","","",""
+"AM_QTDTRAN","CHAR (2)","Quantidade de Transplantes","","","",""
+"AM_GESTANT","CHAR (1)","Indicador de Gestante","(S = Sim; N = Não","","",""

@@ -169,6 +169,7 @@ class EntityClient:
                     "domain": row['domain'] if 'domain' in row else "",
                     "type": row['type'] if 'type' in row else "",
                     'observation': row['observation'] if 'observation' in row else "",
+                    'characteristics':  row['characteristics'] if 'characteristics' in row else "",
                     EndRelations.END_TABLE_TO_COLUMN[1] : {
                         'guid': table['guid']
                     }

@@ -17,6 +17,9 @@ class TypeNames:
     DATASET_PROCESSING_LINEAGE = "dt_dataset_processing_lineage_2653"
     DATASET_PROCESSING_LINEAGE_RESULT = "dt_dataset_processing_lineage_result"
 
+    ACRONYMUS_DATABASE_DTC = "DTC_1"
+    ACRONYMUS_TABLE_DTC = "DTC_2"
+
 class EndRelations:
     END_TABLE_TO_COLUMN = ('columns_table', 'belongs_to_table')
     END_LINEAGE_TO_COLUMN = ('columns_anual_table', 'belongs_to_table_anual')

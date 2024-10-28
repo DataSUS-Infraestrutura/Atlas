@@ -46,8 +46,8 @@ class UtilsClient:
     def detect_column_changes(self, files):
         
         def chave_ordenacao(chave):
-            ano = int(chave[-4:-2])
-            mes = int(chave[-2:])
+            ano = int(chave[0][-4:-2])
+            mes = int(chave[0][-2:])
 
             # E tome numeros magicos, são por que o ano só tem 2 ditito e tem uns < 99
             # que é pra do ano de 1990, então faz essa verificação, tem outra parte do codigo com isso tbm
@@ -63,7 +63,7 @@ class UtilsClient:
 
         files = dict(items_ordenados)
 
-        sorted_files = files.keys()
+        sorted_files = list(files.keys())
         
         change_intervals = []
         last_columns = None

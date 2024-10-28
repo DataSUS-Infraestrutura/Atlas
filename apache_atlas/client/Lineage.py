@@ -124,12 +124,12 @@ class LineageClient:
             deletedColumns = entity['removed']
 
             entity_start = self.client.utils.find(
-                lambda entity: entity['attributes']['name'] == start, 
+                lambda entity: entity['attributes']['name'].strip().lower() == start.strip().lower(), 
                 entities_lineage
             )
 
             entity_end = self.client.utils.find(
-                lambda entity: entity['attributes']['name'] == end, 
+                lambda entity: entity['attributes']['name'].strip().lower() == end.strip().lower(), 
                 entities_lineage
             )
 

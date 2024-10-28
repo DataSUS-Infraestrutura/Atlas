@@ -78,7 +78,7 @@ class ProcessClient:
         last_entity_qualifiedName = last_entity['attributes']['qualifiedName']
 
         # Criar essa entidade nA VM
-        table_group_columns_changed = self.client.search.search_table_by_acronymus("DTC_2")
+        table_group_columns_changed = self.client.search.search_table_by_acronymus(TypeNames.ACRONYMUS_TABLE_DTC)
 
         if not table_group_columns_changed:
             raise AtlasServiceException("Tabela para agrupar colunas modificas não criada")
@@ -208,7 +208,14 @@ class ProcessClient:
 
         return self.client.entity.create_entity(process_body)
 
-    def create_process_alter_column_dataset(self, columns, id_process, table_acronymus):
+    def create_process_alter_column_dataset(self, columns, id_process, table_acronymus, process_attributes=None):
+
+        if not process_attributes:
+            process_attributes = {
+                "name": f"Alterações de Colunas",
+                "description": f"ETL alterações de Colunas",
+            }
+
         dataset_processing_entity = self.client.search.search_unique_entity({
            'typeName': f'{TypeNames.DATASET_PROCESSING_LINEAGE}',
            'attrName': 'id',
@@ -273,24 +280,25 @@ class ProcessClient:
         process_body = {
                 "typeName": f"{TypeNames.PROCESS_CHANGE_COLUMN}",
                 "attributes": {
-                    "name": f"Alterações de Colunas",
-                    "description": f"Alterações de Colunas",
-                    "qualifiedName": qualifiedName_process,
-                    'updated_columns': [ { 'guid': guid }  for guid in columns_to_updated_guid],
-                    "inputs": [
-                        {
-                            "typeName": entity['typeName'],
-                            "guid": entity['guid']  
-                        },
-                    ],
-                    "outputs": [
-                        {
-                            "typeName": final_entity['typeName'],
-                            "guid": final_entity['guid'],  
-                        },
-                    ]
+                 ** process_attributes,
+                 ** {
+                        "qualifiedName": qualifiedName_process,
+                        'updated_columns': [ { 'guid': guid }  for guid in columns_to_updated_guid],
+                        "inputs": [
+                            {
+                                "typeName": entity['typeName'],
+                                "guid": entity['guid']  
+                            },
+                        ],
+                        "outputs": [
+                            {
+                                "typeName": final_entity['typeName'],
+                                "guid": final_entity['guid'],  
+                            },
+                        ]
                 }
             }
+        }
 
         return self.client.entity.create_entity(process_body)
 

@@ -45,7 +45,7 @@ class ProcessClient:
         )
     
     # Não funciona se alterar o nome da coluna
-    def __create_process_alter_column(self, params_search, attributes_to_change):
+    def __create_process_alter_column(self, params_search, attributes_to_change, etl_guid, etl_id):
         partial_entity_table = self.client.search.search_table_by_acronymus(params_search['table_acronymus'])
 
         if not partial_entity_table:
@@ -63,6 +63,7 @@ class ProcessClient:
         if column_to_change_entity is None:
             raise AtlasServiceException("Coluna não existe ou nome inválido")
         
+        # Obsoleto, já tem uma funcão que faz isso
         lineage_column = self.client.lineage.get_lineage_by_guid(column_to_change_entity['guid'])
         last_entity_guid = self.client.lineage.get_last_guid_entity_of_lineage(lineage_column['relations'])
 
@@ -97,21 +98,24 @@ class ProcessClient:
               }
         }
         
-        new_column_data['attributes']['qualifiedName'] = self.client.utils.format_qualifiedName_version(last_entity_qualifiedName)
+        new_column_data['attributes']['qualifiedName'] = self.client.utils.format_qualifiedName_version(f"{etl_id}-{last_entity_qualifiedName}")
         
         new_column_entity = self.client.entity.create_entity(new_column_data)
         version_process = self.client.utils.get_version_lineage(total_absolute_process_lineage)
 
         process_change = {
-            "typeName": f"{TypeNames.PROCESS}",
+            "typeName": f"{TypeNames.PROCESS_ETL_DATASET_PROCESS}",
             "attributes": {
                 "name": f"Alteracão de Colunas - {last_entity['attributes']['name']}",
                 "description": f"Alterações nos atributos: " + self.client.utils.format_change_atributes_to_description(attributes_to_change),
+                'etl_process': {
+                    'guid': etl_guid
+                }
             }  
         }
 
         process_change['attributes']['qualifiedName'] = \
-            f"Process.AlterTable_DataSUS@{params_search['table_acronymus']}{params_search['column_name']}.v{version_process}"
+            f"Process.TableChange_DataSUS@{params_search['table_acronymus']}{etl_id}{params_search['column_name']}.v{version_process}"
         
         process_change['attributes']['inputs'] = [
              {
@@ -247,15 +251,20 @@ class ProcessClient:
                 columns_to_updated_guid.append(find_column['guid'])
 
         diff_columns = set(columns_guid) - set(columns_to_updated_guid)
+
         columns_updated = []
+        processes_guids = []
     
         for column in columns:
             process_response = self.__create_process_alter_column(
               params_search= { 'table_acronymus': table_acronymus, 'column_name': column['name'] },
-              attributes_to_change=column['attributes_to_change']
+              attributes_to_change=column['attributes_to_change'],
+              etl_guid=dataset_processing_entity['guid'],
+              etl_id=id_process
             )
 
             columns_updated.append(process_response['entity_column']['guid'])
+            processes_guids.append(process_response['process_entity']['guid'])
 
         final_columns = list(diff_columns)
         final_columns.extend(columns_updated)
@@ -284,6 +293,7 @@ class ProcessClient:
                  ** {
                         "qualifiedName": qualifiedName_process,
                         'updated_columns': [ { 'guid': guid }  for guid in columns_to_updated_guid],
+                        "processes": [ { 'guid': guid }  for guid in processes_guids ],
                         "inputs": [
                             {
                                 "typeName": entity['typeName'],

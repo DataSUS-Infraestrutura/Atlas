@@ -11,65 +11,6 @@ atlas_section = ApacheAtlasClient(
     "admin"
 )
 
-
-'''
-
-
-
-
-
-
-
-
-
-
-
-
-'''
-
-
-
-
-'''
-atlas_section.process.create_process_alter_column_dataset(
-    [
-        { 
-            'name': 'AQ_ESQU_P2', 
-            'attributes_to_change': { 
-            'domain': ', '.join({),
-            'type': 'Char (255)'
-        }
-                'name': 'AQ_ESQUEMA_P2'
-            }
-        },
-        { 
-           'name': 'AP_CEPPCN', 
-           'attributes_to_change': { 
-           'domain': ', '.join({),
-           'type': 'Char (255)'
-        }
-               'name': 'AP_CEP_PACIENTE'
-           }
-        },
-    ],
-    '948329084902384',
-    "AQ"
-)
-
-atlas_section.process.create_process_drop_column_dataset(
-    '948329084902384',
-    [
-        'AP_VL_AP',
-        'AP_AUTORIZ',
-        'AP_CIDSEC',
-        'AP_GESTAO',
-        'AP_CIDPRI',
-        'AP_COIDADE'
-    ]
-)
-'''
-
-
 random_int = random.randint(0, 100_000_000)
 
 

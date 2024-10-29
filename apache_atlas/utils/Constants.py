@@ -14,8 +14,9 @@ class TypeNames:
     PROCESS_CHANGE_COLUMN = "dt_column_change_process"
 
     # mUDAR Depois
-    DATASET_PROCESSING_LINEAGE = "dt_dataset_processing_lineage_2653"
-    DATASET_PROCESSING_LINEAGE_RESULT = "dt_dataset_processing_lineage_result"
+    DATASET_PROCESSING_LINEAGE = "dt_etl_data_batch"
+    DATASET_PROCESSING_LINEAGE_RESULT = "dt_result_data_batch"
+    PROCESS_ETL_DATASET_PROCESS = 'dt_change_etl_column'
 
     ACRONYMUS_DATABASE_DTC = "DTC_1"
     ACRONYMUS_TABLE_DTC = "DTC_2"

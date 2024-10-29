@@ -32,7 +32,8 @@ class LineageClient:
         return {
             'lineage': lineage_column,
             'last_entity': last_entity,
-            'total_process': self.client.utils.get_version_lineage(len(lineage_column['relations']))
+            'total_process': self.client.utils.get_version_lineage(len(lineage_column['relations'])),
+            'number_process': len(lineage_column['relations'])
         }
 
     def get_lineage_by_guid(self, guid_entity):
@@ -222,7 +223,11 @@ class LineageClient:
 
         return self.client.entity.create_entity(entity_body)
     
-    def create_entity_lineage_by_interval_time_anual(self, interval, table_acronymus, id_process):
+    def create_entity_lineage_by_interval_time_anual(self, interval, table_acronymus, process_attributes):
+        
+        if 'id_process' not in process_attributes:
+            raise AtlasServiceException("ID do ETL Batch é obrigatório") 
+        
         table = self.client.search.search_table_by_acronymus(table_acronymus)
 
         if not table:
@@ -262,15 +267,25 @@ class LineageClient:
             for file in files_entity:
                 files.add(file['guid'])
 
+        if 'name' not in process_attributes and 'description' not in process_attributes:
+            process_attributes = {
+                'name': f'Arquivos de {table_acronymus} - {start_year}-{end_year}',
+                'description': f"Arquivos de {table_acronymus} que passaram por um processo dos anos de {start_year} até {end_year}",
+            }
+        
+        id_process = process_attributes['id_process']
+
         entity_body = {
             'typeName': TypeNames.DATASET_PROCESSING_LINEAGE,
             'attributes': {
-                'name': f'Arquivos de {table_acronymus} - {start_year}-{end_year}',
-                'qualifiedName': f'{TypeNames.DATASET_PROCESSING_LINEAGE}.{table_acronymus}@{id_process}',
-                'description': f"Arquivos de {table_acronymus} que passaram por um processo dos anos de {start_year} até {end_year}",
-                'files_interval': [ { 'guid': guid_file } for guid_file in files],
-                'columns': [{ 'guid': column_guid } for column_guid in columns],
-                'id': id_process
+                 ** process_attributes,
+                 ** {
+                    'qualifiedName': f'{TypeNames.DATASET_PROCESSING_LINEAGE}.{table_acronymus}@{id_process}',
+                    'files_interval': [ { 'guid': guid_file } for guid_file in files],
+                    'table': { 'guid': table['guid'] },
+                    'columns': [{ 'guid': column_guid } for column_guid in columns],
+                    'id': id_process     
+                 }
             }
         }
 

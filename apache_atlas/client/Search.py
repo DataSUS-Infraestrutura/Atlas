@@ -73,7 +73,6 @@ class SearchClient:
                 'typeName': f'{TypeNames.TABLE}',
                 'attrName': 'acronymus',
                 'attrValuePrefix': acronymus,
-                'limit': 1,
                 'offset': 0
             }
         )
@@ -81,4 +80,7 @@ class SearchClient:
         if 'entities' not in response:
             return None
 
-        return response['entities'][0]
+        return self.client.utils.find(
+             lambda entity: entity['attributes']['acronymus'] == acronymus,
+             response['entities']
+        )

@@ -107,12 +107,13 @@ class EntityClient:
                 **data,
                 ** {
                     'qualifiedName': f'{TypeNames.TABLE_FILE}.{table_acronymus}.DataSUS@{data["name"]}',
-                    EndRelations.END_TABLE_FILE_COLUMN[1]: {
+                    EndRelations.END_TABLE_TO_FILE[1]: {
                         'guid': entity_table['guid']
                     },
                     EndRelations.END_TABLE_FILE_COLUMN[0]: {
                         'guid': entity_column['guid']
-                    }, 
+                    },
+                    'test_attribute': '10' 
                   }
              },
         }
